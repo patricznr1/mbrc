@@ -4,6 +4,12 @@ All notable changes to MBRC are recorded here. The record of reference is the "C
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.0] - 2026-09-21
+
+### Added
+
+- DOI 10.5281/zenodo.22878931 registered for version 1.0 (Zenodo, release v1.0.0 of github.com/patricznr1/mbrc). An English convenience translation of the privacy notice is linked at /privacy, and corrections can also be filed as issues at github.com/patricznr1/mbrc. Changes by the maintainer; no external report.
+
 ## [1.0] - 2026-09-15
 
 ### Added
