@@ -25,6 +25,8 @@ The maintainer also builds a long-term memory system (NEXUS), and no figure of t
 
 ## Cite
 
+DOI of this version: https://doi.org/10.5281/zenodo.22878931 · DOI of all versions: https://doi.org/10.5281/zenodo.22878930
+
 ```bibtex
 @misc{zeller2026mbrc,
   author       = {Zeller, Patric},
@@ -32,6 +34,7 @@ The maintainer also builds a long-term memory system (NEXUS), and no figure of t
   year         = {2026},
   month        = {9},
   howpublished = {\url{https://patric-zeller.de/MBRC}},
+  doi          = {10.5281/zenodo.22878931},
   note         = {Version 1.0, published 15 September 2026. Licence CC BY 4.0.}
 }
 ```
