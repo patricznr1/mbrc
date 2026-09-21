@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use this checklist, please cite it as below."
+title: Memory Benchmark Reporting Checklist (MBRC)
+version: "1.0"
+date-released: 2026-09-15
+authors:
+  - family-names: Zeller
+    given-names: Patric
+url: https://patric-zeller.de/MBRC
+license: CC-BY-4.0
+repository-code: https://github.com/patricznr1/mbrc

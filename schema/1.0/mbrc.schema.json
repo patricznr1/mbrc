@@ -1,0 +1,669 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://patric-zeller.de/MBRC/1.0/mbrc.schema.json",
+  "title": "MBRC result record 1.0",
+  "description": "Machine-readable record of a single measurement of a long-term memory system under the Memory Benchmark Reporting Checklist 1.0. A record is conformant when every field required for the branches it declares is present and non-empty. Conformance is self-declared: this schema can reject an incomplete record, it cannot tell whether the values are true. Licence CC0 1.0.",
+  "type": "object",
+  "required": [
+    "schema",
+    "generated",
+    "system",
+    "run",
+    "benchmark",
+    "r1_reader",
+    "r2_judge",
+    "r3_r4_scoring",
+    "r5_cost",
+    "r6_modules",
+    "r9_controls",
+    "r10_provenance",
+    "r8_outcomes",
+    "determinism",
+    "disclosure"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "MBRC/1.0"
+    },
+    "schema_uri": {
+      "type": "string",
+      "format": "uri"
+    },
+    "generated": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "conformance": {
+      "type": "object",
+      "required": [
+        "declaration"
+      ],
+      "properties": {
+        "declaration": {
+          "enum": [
+            "self-declared",
+            "third-party-verified"
+          ]
+        },
+        "verified_by": {
+          "type": "string",
+          "minLength": 1,
+          "description": "name of the verifying party, or 'none'"
+        }
+      },
+      "additionalProperties": false
+    },
+    "system": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "configuration"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "commit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "configuration": {
+          "type": "string",
+          "minLength": 1,
+          "description": "every setting that affects the result"
+        }
+      },
+      "additionalProperties": false
+    },
+    "run": {
+      "type": "object",
+      "required": [
+        "date",
+        "measurement_window"
+      ],
+      "properties": {
+        "date": {
+          "type": "string",
+          "minLength": 1,
+          "description": "YYYY-MM-DD"
+        },
+        "measurement_window": {
+          "type": "string",
+          "minLength": 1,
+          "description": "R1: all arms measured inside one window"
+        }
+      },
+      "additionalProperties": false
+    },
+    "benchmark": {
+      "type": "object",
+      "required": [
+        "name",
+        "version",
+        "subset",
+        "questions"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "description": "release, tag or commit of the question set"
+        },
+        "subset": {
+          "type": "string",
+          "minLength": 1
+        },
+        "questions": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exclusions": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "r1_reader": {
+      "type": "object",
+      "required": [
+        "model",
+        "version",
+        "temperature",
+        "context_budget_ceiling_tokens",
+        "seed",
+        "answer_prompt"
+      ],
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "temperature": {
+          "type": "string",
+          "minLength": 1
+        },
+        "context_budget_ceiling_tokens": {
+          "type": "string",
+          "minLength": 1,
+          "description": "identical cap across arms, not an identical fill"
+        },
+        "seed": {
+          "type": "string",
+          "minLength": 1
+        },
+        "answer_prompt": {
+          "enum": [
+            "identical",
+            "differs"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "r2_judge": {
+      "type": "object",
+      "required": [
+        "judge_in_path"
+      ],
+      "properties": {
+        "judge_in_path": {
+          "enum": [
+            "yes",
+            "no"
+          ]
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1
+        },
+        "prompt_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "family_vs_reader": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rejection_rate_pct": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rejection_set_size": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acceptance_rate_pct": {
+          "type": "string",
+          "minLength": 1
+        },
+        "acceptance_set_size": {
+          "type": "string",
+          "minLength": 1
+        },
+        "human_agreement_pct": {
+          "type": "string",
+          "minLength": 1
+        },
+        "double_scored_n": {
+          "type": "string",
+          "minLength": 1
+        },
+        "gwet_ac1": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cohens_kappa": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kappa_axis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bias_checks": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "judge_in_path": {
+                "const": "yes"
+              }
+            },
+            "required": [
+              "judge_in_path"
+            ]
+          },
+          "then": {
+            "required": [
+              "model",
+              "prompt_version",
+              "family_vs_reader",
+              "rejection_rate_pct",
+              "rejection_set_size",
+              "acceptance_rate_pct",
+              "acceptance_set_size",
+              "human_agreement_pct",
+              "double_scored_n",
+              "gwet_ac1",
+              "cohens_kappa",
+              "kappa_axis",
+              "bias_checks"
+            ]
+          }
+        }
+      ]
+    },
+    "r3_r4_scoring": {
+      "type": "object",
+      "required": [
+        "scheme",
+        "criteria_origin",
+        "tasks",
+        "smallest_effect_of_interest",
+        "replicates",
+        "seeds_and_permutations",
+        "aggregation",
+        "dispersion",
+        "statistical_test",
+        "statistical_unit",
+        "tests_total",
+        "multiplicity"
+      ],
+      "properties": {
+        "scheme": {
+          "enum": [
+            "nugget",
+            "binary",
+            "rbo",
+            "tau_b",
+            "computed",
+            "other"
+          ]
+        },
+        "criteria_origin": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tasks": {
+          "type": "string",
+          "minLength": 1
+        },
+        "smallest_effect_of_interest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "replicates": {
+          "type": "string",
+          "minLength": 1
+        },
+        "seeds_and_permutations": {
+          "type": "string",
+          "minLength": 1
+        },
+        "aggregation": {
+          "enum": [
+            "mean",
+            "median"
+          ]
+        },
+        "dispersion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statistical_test": {
+          "type": "string",
+          "minLength": 1
+        },
+        "statistical_unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tests_total": {
+          "type": "string",
+          "minLength": 1
+        },
+        "multiplicity": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "r5_cost": {
+      "type": "object",
+      "required": [
+        "applies"
+      ],
+      "properties": {
+        "applies": {
+          "enum": [
+            "yes",
+            "no"
+          ]
+        },
+        "tokens_input": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tokens_output": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retrieval_latency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "end_to_end_latency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "measurements_per_cell": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hardware_region": {
+          "type": "string",
+          "minLength": 1
+        },
+        "concurrency": {
+          "type": "string",
+          "minLength": 1
+        },
+        "context_reduction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ingestion_tokens": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ingestion_time": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tokens_cached_input": {
+          "type": "string",
+          "minLength": 1
+        },
+        "cache_state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "storage": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "applies": {
+                "const": "yes"
+              }
+            },
+            "required": [
+              "applies"
+            ]
+          },
+          "then": {
+            "required": [
+              "tokens_input",
+              "tokens_output",
+              "retrieval_latency",
+              "end_to_end_latency",
+              "measurements_per_cell",
+              "hardware_region",
+              "concurrency",
+              "context_reduction",
+              "ingestion_tokens",
+              "ingestion_time"
+            ]
+          }
+        }
+      ]
+    },
+    "r6_modules": {
+      "type": "object",
+      "required": [
+        "full_system_fixed_reader"
+      ],
+      "properties": {
+        "retrieval": {
+          "type": "string",
+          "minLength": 1
+        },
+        "extraction": {
+          "type": "string",
+          "minLength": 1
+        },
+        "routing": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maintenance": {
+          "type": "string",
+          "minLength": 1
+        },
+        "full_system_fixed_reader": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "r9_controls": {
+      "type": "object",
+      "required": [
+        "no_memory",
+        "full_context",
+        "corrupted_memory",
+        "distances_within_dispersion"
+      ],
+      "properties": {
+        "no_memory": {
+          "type": "string",
+          "minLength": 1,
+          "description": "reader alone, no retrieved context"
+        },
+        "full_context": {
+          "type": "string",
+          "minLength": 1,
+          "description": "entire source text in context, no memory system"
+        },
+        "corrupted_memory": {
+          "type": "string",
+          "minLength": 1,
+          "description": "store emptied or filled with wrong entries"
+        },
+        "distances_within_dispersion": {
+          "type": "string",
+          "minLength": 1,
+          "description": "any distance not larger than the R4 dispersion"
+        }
+      },
+      "additionalProperties": false
+    },
+    "r10_provenance": {
+      "type": "object",
+      "required": [
+        "question_set_public_since",
+        "reader_training_cutoff",
+        "sha256_questions",
+        "sha256_gold_answers",
+        "dev_test_separation",
+        "test_set_evaluations",
+        "runs_not_reported"
+      ],
+      "properties": {
+        "question_set_public_since": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reader_training_cutoff": {
+          "type": "string",
+          "minLength": 1
+        },
+        "canary_or_holdout": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256_questions": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256_gold_answers": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256_criteria": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256_judge_prompt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dev_test_separation": {
+          "type": "string",
+          "minLength": 1
+        },
+        "test_set_evaluations": {
+          "type": "string",
+          "minLength": 1
+        },
+        "runs_not_reported": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "r8_outcomes": {
+      "type": "object",
+      "required": [
+        "passed",
+        "breached",
+        "not_measurable",
+        "no_object",
+        "undefined_values",
+        "undefined_mechanism",
+        "identification_bounds"
+      ],
+      "properties": {
+        "passed": {
+          "type": "string",
+          "minLength": 1
+        },
+        "breached": {
+          "type": "string",
+          "minLength": 1
+        },
+        "not_measurable": {
+          "type": "string",
+          "minLength": 1
+        },
+        "no_object": {
+          "type": "string",
+          "minLength": 1
+        },
+        "undefined_values": {
+          "type": "string",
+          "minLength": 1,
+          "description": "count and share"
+        },
+        "undefined_mechanism": {
+          "type": "string",
+          "minLength": 1,
+          "description": "independent of the result, or correlated with it"
+        },
+        "identification_bounds": {
+          "type": "string",
+          "minLength": 1,
+          "description": "defined cases only / all undefined as failure / all as success"
+        }
+      },
+      "additionalProperties": false
+    },
+    "determinism": {
+      "type": "object",
+      "required": [
+        "embedding",
+        "reranker",
+        "instance_state",
+        "raw_data"
+      ],
+      "properties": {
+        "embedding": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reranker": {
+          "type": "string",
+          "minLength": 1
+        },
+        "instance_state": {
+          "type": "string",
+          "minLength": 1
+        },
+        "warmup_runs": {
+          "type": "string",
+          "minLength": 1
+        },
+        "raw_data": {
+          "enum": [
+            "published",
+            "on_request",
+            "withheld"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "disclosure": {
+      "type": "object",
+      "required": [
+        "competing_interest",
+        "foreign_figures",
+        "limitations"
+      ],
+      "properties": {
+        "competing_interest": {
+          "type": "string",
+          "minLength": 1
+        },
+        "foreign_figures": {
+          "type": "string",
+          "minLength": 1
+        },
+        "limitations": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

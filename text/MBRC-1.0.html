@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>MBRC — Memory Benchmark Reporting Checklist</title>
+<meta name="description" content="Ten rules and a reporting form for comparable evaluation of long-term memory systems. Maintained by Patric Zeller.">
+<meta name="theme-color" content="#F7F4ED">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://patric-zeller.de/MBRC">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="MBRC — Memory Benchmark Reporting Checklist">
+<meta property="og:description" content="A memory benchmark number means nothing without its setup. Ten rules, one verdict per criterion, one machine-readable result file.">
+<meta property="og:locale" content="en_GB">
+<meta property="og:site_name" content="MBRC">
+<meta property="og:url" content="https://patric-zeller.de/MBRC">
+<meta property="og:image" content="https://patric-zeller.de/images/mbrc-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MBRC — A benchmark number means nothing without its setup. Ten rules, one verdict per criterion, one machine-readable record.">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MBRC — Memory Benchmark Reporting Checklist">
+<meta name="twitter:description" content="A memory benchmark number means nothing without its setup. Ten rules, one verdict per criterion, one machine-readable result file.">
+<meta name="twitter:image" content="https://patric-zeller.de/images/mbrc-card.png">
+
+<!--
+  Schriften lokal ausliefern (Datenschutzerklaerung Abschnitt 5).
+  Erwartete Dateien unter /fonts/ :
+    newsreader-variable.woff2
+    ibm-plex-mono-400.woff2 · ibm-plex-mono-500.woff2 · ibm-plex-mono-600.woff2
+  Fehlen sie, greift der Fallback-Stack — die Seite bleibt vollstaendig lesbar.
+-->
+<style>
+@font-face{font-family:"Newsreader";font-style:normal;font-weight:300 700;font-display:swap;
+  src:url("/fonts/newsreader-variable.woff2") format("woff2-variations");}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;
+  src:url("/fonts/ibm-plex-mono-400.woff2") format("woff2");}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:500;font-display:swap;
+  src:url("/fonts/ibm-plex-mono-500.woff2") format("woff2");}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:600;font-display:swap;
+  src:url("/fonts/ibm-plex-mono-600.woff2") format("woff2");}
+
+:root{
+  --paper:#F7F4ED;
+  --paper-deep:#EFEBE0;
+  --ink:#1A1713;
+  --ink-70:rgba(26,23,19,.70);
+  --ink-55:rgba(26,23,19,.64);
+  --ink-40:rgba(26,23,19,.50);
+  --ink-12:rgba(26,23,19,.12);
+  --ink-06:rgba(26,23,19,.06);
+  --rust:#A8390F;
+  --rust-deep:#7E2A0A;
+  --moss:#4C5A33;
+  --steel:#3A5A6B;
+
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+  --s--1:clamp(0.78rem,0.76rem + 0.10vw,0.83rem);
+  --s-0:clamp(1.06rem,1.01rem + 0.24vw,1.19rem);
+  --s-1:clamp(1.28rem,1.19rem + 0.42vw,1.50rem);
+  --s-2:clamp(1.53rem,1.39rem + 0.68vw,1.86rem);
+  --s-3:clamp(1.86rem,1.62rem + 1.14vw,2.36rem);
+  --s-4:clamp(2.30rem,1.92rem + 1.85vw,3.05rem);
+  --s-5:clamp(2.75rem,2.10rem + 3.10vw,4.10rem);
+
+  --gutter:clamp(1.25rem,4vw,2.5rem);
+  --col-text:min(100% - 2*var(--gutter),42rem);
+  --col-wide:min(100% - 2*var(--gutter),56rem);
+  --col-full:min(100% - 2*var(--gutter),68rem);
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;overflow-x:hidden;background:var(--paper);color:var(--ink);
+  font-family:var(--serif);font-size:var(--s-0);line-height:1.62;
+  font-optical-sizing:auto;text-rendering:optimizeLegibility;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--rust);color:var(--paper)}
+
+a{color:var(--ink);text-underline-offset:.18em;
+  text-decoration:underline;text-decoration-color:var(--ink-40);text-decoration-thickness:.055em}
+a:hover{text-decoration-color:var(--rust);color:var(--rust-deep)}
+a:focus-visible,button:focus-visible,summary:focus-visible,
+input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:2px solid var(--rust);outline-offset:3px;border-radius:1px}
+
+.skip{position:absolute;left:-999px;top:0;background:var(--ink);color:var(--paper);
+  padding:.6rem 1rem;z-index:99;font-family:var(--mono);font-size:var(--s--1)}
+.skip:focus{left:.5rem;top:.5rem}
+
+/* ---------- Raster ---------- */
+.wrap{display:grid;grid-template-columns:minmax(0,1fr);justify-items:center}
+.text{width:var(--col-text)}
+.wide{width:var(--col-wide)}
+.full{width:var(--col-full)}
+
+@media (min-width:64rem){
+  .wrap{
+    grid-template-columns:
+      [full-start] 1fr
+      [margin-start] 9rem
+      [text-start] minmax(0,42rem)
+      [text-end] 1fr [full-end];
+    justify-items:stretch;
+  }
+  .text{grid-column:text;width:auto}
+  .wide{grid-column:margin-start / text-end;width:auto}
+  .full{grid-column:full;width:min(100%,68rem);justify-self:center}
+  .wrap > .wrap{grid-column:full-start / full-end}
+  .aside{grid-column:margin-start / text-start;
+    padding-right:2rem;text-align:right;
+    font-family:var(--mono);font-size:var(--s--1);line-height:1.5;
+    color:var(--ink-55);margin-top:.45rem}
+}
+.aside{font-family:var(--mono);font-size:var(--s--1);color:var(--ink-55);
+  line-height:1.5;margin:.25rem 0 1.25rem;width:var(--col-text);max-width:100%}
+@media (min-width:64rem){.aside{margin:0;width:auto}}
+
+/* ---------- Kopf ---------- */
+.masthead{border-bottom:1px solid var(--ink-12);position:sticky;top:0;z-index:10;
+  background:color-mix(in oklab,var(--paper) 92%,transparent);
+  backdrop-filter:saturate(140%) blur(6px)}
+.masthead .full{display:flex;align-items:baseline;gap:1.5rem;
+  padding:.85rem 0;flex-wrap:wrap}
+.sigil{font-family:var(--mono);font-size:var(--s--1);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink);text-decoration:none;font-weight:600;
+  min-height:24px;display:inline-flex;align-items:center}
+.sigil span{color:var(--ink-55);font-weight:400;text-transform:none;letter-spacing:0}
+.sigil:hover{color:var(--rust-deep)}
+nav.main{display:flex;gap:1.35rem;flex-wrap:wrap;margin-left:auto}
+nav.main a{font-family:var(--mono);font-size:var(--s--1);text-decoration:none;
+  color:var(--ink-70);padding:.35rem 0;min-height:24px;display:inline-flex;align-items:center}
+nav.main a:hover{color:var(--rust-deep);text-decoration:underline;text-underline-offset:.3em}
+
+/* ---------- Hero ---------- */
+.hero{padding:clamp(3rem,9vw,6.5rem) 0 clamp(2rem,5vw,3.5rem)}
+.hero h1{max-width:19ch}
+.hero-grid{display:grid;grid-template-columns:1fr;gap:2.5rem}
+@media (min-width:62rem){
+  .hero-grid{grid-template-columns:minmax(0,1.25fr) minmax(18rem,.75fr);
+    gap:3rem;align-items:end}
+}
+.kicker{font-family:var(--mono);font-size:var(--s--1);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--rust);margin:0 0 1.4rem}
+h1{font-size:var(--s-5);line-height:1.04;font-weight:400;margin:0 0 1.6rem;
+  letter-spacing:-.018em;text-wrap:balance}
+h1 em{font-style:italic;color:var(--rust-deep)}
+.lede{font-size:var(--s-1);line-height:1.5;color:var(--ink-70);margin:0 0 1rem;
+  max-width:46ch}
+.herometa{display:flex;gap:1.5rem 2.5rem;flex-wrap:wrap;
+  font-family:var(--mono);font-size:var(--s--1);color:var(--ink-55);
+  border-top:1px solid var(--ink-12);padding-top:1.1rem;margin-top:2.5rem}
+.herometa b{font-weight:500;color:var(--ink);display:block}
+
+/* Kennzahlenkarte */
+.kpi{border:1px solid var(--ink-12);background:var(--paper-deep)}
+.kpi-head{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  padding:.55rem .9rem;border-bottom:1px solid var(--ink-12);
+  font-family:var(--mono);font-size:var(--s--1);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink-55)}
+.kpi-head b{color:var(--ink);font-weight:600;letter-spacing:.06em}
+.kpi-row{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:baseline;
+  padding:.55rem .9rem;border-bottom:1px solid var(--ink-06)}
+.kpi-row:last-of-type{border-bottom:0}
+.kpi-row .k{font-family:var(--mono);font-size:var(--s--1);color:var(--ink-70);line-height:1.4}
+.kpi-row .v{font-family:var(--mono);font-size:var(--s-1);font-weight:500;color:var(--ink);
+  font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi-note{padding:.6rem .9rem;border-top:1px solid var(--ink-12);
+  font-family:var(--mono);font-size:var(--s--1);color:var(--ink-55);line-height:1.5}
+
+/* ---------- Sektionen ---------- */
+section{padding:clamp(2.5rem,6vw,4.5rem) 0;border-top:1px solid var(--ink-12);
+  scroll-margin-top:4.5rem}
+.secnum{font-family:var(--mono);font-size:var(--s--1);color:var(--rust);
+  letter-spacing:.08em;margin:0 0 .7rem;text-transform:uppercase}
+h2{font-size:var(--s-3);line-height:1.15;font-weight:400;margin:0 0 1.1rem;
+  letter-spacing:-.012em;text-wrap:balance}
+h3{font-size:var(--s-2);line-height:1.22;font-weight:400;margin:2.4rem 0 .7rem;
+  letter-spacing:-.008em}
+h4{font-size:var(--s-0);font-weight:600;margin:1.6rem 0 .4rem;letter-spacing:.005em}
+p{margin:0 0 1.05rem;max-width:62ch}
+code{font-family:var(--mono);font-size:.9em;background:var(--ink-06);padding:.1em .35em;overflow-wrap:anywhere}
+.lead-sub{font-size:var(--s-1);line-height:1.45;color:var(--ink-70);max-width:44ch;
+  margin:0 0 1.6rem}
+
+/* ---------- Regeln ---------- */
+.rule{padding:1.6rem 0;border-top:1px solid var(--ink-12)}
+.rule:last-of-type{border-bottom:1px solid var(--ink-12)}
+.rule h3{margin:0 0 .55rem;font-size:var(--s-2)}
+.rule h3 .rid{font-family:var(--mono);font-size:var(--s--1);color:var(--rust);
+  letter-spacing:.06em;margin-right:.8em;vertical-align:.28em}
+.rule p{margin-bottom:.75rem}
+.rule p:last-child{margin-bottom:0}
+.rule ul{margin:.25rem 0 1rem;padding-left:1.25rem}
+.rule li{margin:0 0 .45rem;max-width:60ch}
+.rule li::marker{color:var(--rust)}
+ul.plain{list-style:none;margin:1rem 0 1.2rem;padding:0}
+ul.plain li{position:relative;padding-left:1.5rem;margin:0 0 .7rem;max-width:62ch}
+ul.plain li::before{content:"—";position:absolute;left:0;color:var(--rust)}
+
+/* ---------- Tabellen ---------- */
+table{width:100%;border-collapse:collapse;margin:1.4rem 0;
+  font-family:var(--mono);font-size:var(--s--1);table-layout:fixed}
+td,th{overflow-wrap:anywhere}
+@media (max-width:44rem){table{display:block;overflow-x:auto;table-layout:auto}
+  /* Woerter behalten ihre Breite; die Tabelle scrollt seitlich statt Spalten auf ein Zeichen zu quetschen. */
+  td,th{overflow-wrap:normal}}
+caption{text-align:left;font-family:var(--mono);font-size:var(--s--1);
+  color:var(--ink-55);margin-bottom:.7rem;line-height:1.5}
+th,td{text-align:left;padding:.6rem .8rem .6rem 0;border-bottom:1px solid var(--ink-12);
+  vertical-align:top}
+th{font-weight:600;color:var(--ink);border-bottom-color:var(--ink-40)}
+td.num{font-variant-numeric:tabular-nums;text-align:right;padding-right:1.4rem}
+tr:hover td{background:var(--ink-06)}
+.status{font-family:var(--mono);letter-spacing:.04em;white-space:nowrap;color:var(--ink-55)}
+.status::before{content:"";display:inline-block;width:.5em;height:.5em;
+  margin-right:.55em;vertical-align:.06em;border-radius:50%;background:currentColor}
+.st-pass{color:var(--moss)}
+.st-breach{color:var(--rust)}
+.st-nm{color:var(--ink-40)}
+.st-no{color:var(--steel)}
+
+/* ---------- Kästen ---------- */
+.note{background:var(--paper-deep);border:1px solid var(--ink-12);
+  padding:clamp(1.3rem,3vw,2rem);margin:1.6rem 0}
+.note h4{margin-top:0;font-family:var(--mono);font-size:var(--s--1);
+  letter-spacing:.06em;text-transform:uppercase;color:var(--rust)}
+.note p:last-child{margin-bottom:0}
+.note p{max-width:64ch}
+.note.calm h4{color:var(--steel)}
+
+details{border-top:1px solid var(--ink-12);padding:.9rem 0}
+details summary{cursor:pointer;font-family:var(--mono);font-size:var(--s--1);
+  color:var(--ink-70);list-style:none;min-height:24px;display:flex;align-items:center;gap:.6rem}
+details summary::-webkit-details-marker{display:none}
+details summary::before{content:"+";color:var(--rust);font-weight:600;width:1ch}
+details[open] summary::before{content:"−"}
+details summary:hover{color:var(--ink)}
+details .body{padding:.8rem 0 .3rem 1.6rem}
+details .body p{font-size:var(--s--1);line-height:1.6;color:var(--ink-70);max-width:60ch}
+
+/* ---------- Formular ---------- */
+.record{border:1px solid var(--ink-12);background:var(--paper-deep);margin-top:1.8rem}
+.record-head{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+  padding:.75rem .9rem;border-bottom:1px solid var(--ink-12);
+  font-family:var(--mono);font-size:var(--s--1);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--ink-55)}
+.record-head b{color:var(--ink);font-weight:600}
+fieldset{border:0;border-bottom:1px solid var(--ink-12);margin:0;padding:1.35rem .9rem}
+fieldset:last-of-type{border-bottom:0}
+legend{font-family:var(--mono);font-size:var(--s--1);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--rust);padding:0;margin-bottom:1rem}
+.fields{display:grid;grid-template-columns:1fr;gap:.95rem 1.4rem}
+@media (min-width:38rem){.fields{grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}}
+.field{display:flex;flex-direction:column;gap:.3rem;min-width:0}
+.field.wide{grid-column:1/-1}
+label{font-family:var(--mono);font-size:var(--s--1);color:var(--ink-55);line-height:1.4}
+label .req{color:var(--rust)}
+label .req.cond{visibility:hidden}
+input,select,textarea{
+  font-family:var(--mono);font-size:var(--s--1);color:var(--ink);
+  background:var(--paper);border:1px solid var(--ink-12);border-radius:0;
+  padding:.5rem .55rem;width:100%;min-height:2.4rem;line-height:1.4}
+textarea{resize:vertical;min-height:5.5rem}
+input::placeholder,textarea::placeholder{color:var(--ink-40)}
+input.bad,select.bad,textarea.bad{border-color:var(--rust);background:color-mix(in oklab,var(--rust) 6%,var(--paper))}
+.hint{font-family:var(--serif);font-size:var(--s--1);color:var(--ink-55);line-height:1.5;
+  margin:.9rem 0 0;max-width:60ch}
+.record-foot{display:flex;gap:1rem;flex-wrap:wrap;align-items:center;
+  padding:1.1rem .9rem;border-top:1px solid var(--ink-12)}
+button{font-family:var(--mono);font-size:var(--s--1);letter-spacing:.05em;
+  border:1px solid var(--ink);background:var(--ink);color:var(--paper);
+  padding:.6rem 1.1rem;border-radius:0;cursor:pointer;min-height:2.4rem}
+button:hover{background:var(--rust-deep);border-color:var(--rust-deep)}
+button.ghost{background:transparent;color:var(--ink)}
+button.ghost:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.msg{font-family:var(--mono);font-size:var(--s--1);color:var(--ink-55);line-height:1.4}
+.msg.bad{color:var(--rust-deep)}
+.out{display:none;border-top:1px solid var(--ink-12)}
+.out.on{display:block}
+.out-head{padding:.55rem .9rem;font-family:var(--mono);font-size:var(--s--1);
+  letter-spacing:.06em;text-transform:uppercase;color:var(--ink-55);
+  border-bottom:1px solid var(--ink-12)}
+pre{margin:0;padding:1.1rem .9rem;overflow:auto;max-height:26rem;background:var(--paper);
+  font-family:var(--mono);font-size:var(--s--1);line-height:1.6;color:var(--ink-70)}
+/* Zitierblock: weich umbrechen statt seitlich scrollen; Kopieren liefert die Originalzeilen. */
+.note pre{white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* ---------- Fuß ---------- */
+footer{border-top:1px solid var(--ink-12);padding:2.5rem 0 4rem;
+  font-family:var(--mono);font-size:var(--s--1);color:var(--ink-55)}
+footer .full{display:flex;gap:1.2rem 2.5rem;flex-wrap:wrap;align-items:baseline}
+footer a{color:var(--ink-70);min-height:24px;display:inline-flex;align-items:center}
+footer .right{margin-left:auto}
+
+@media (prefers-reduced-motion:no-preference){
+  a{transition:color .14s ease,text-decoration-color .14s ease}
+  button{transition:background .14s ease,border-color .14s ease}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+/* ---------- Quellenverweise und Quellenliste ---------- */
+.disclaim{font-family:var(--mono);font-size:var(--s--1);color:var(--ink-55);
+  line-height:1.5;max-width:54ch;margin:1.4rem 0 0}
+sup.ref{font-family:var(--mono);font-size:.62em;line-height:0;vertical-align:.45em;margin-left:.15em}
+sup.ref a{text-decoration:none;color:var(--rust);font-weight:600}
+sup.ref a:hover{text-decoration:underline;text-underline-offset:.2em}
+.kpi-row .k .src{display:block;color:var(--ink-40);margin-top:.22rem;font-size:.94em;line-height:1.45}
+.kpi-note b{color:var(--ink);font-weight:600}
+ol.sources{list-style:none;counter-reset:src;margin:1.8rem 0 0;padding:0}
+ol.sources li{counter-increment:src;position:relative;padding:.85rem 0 .85rem 2.6rem;
+  border-top:1px solid var(--ink-12);font-family:var(--mono);font-size:var(--s--1);
+  line-height:1.6;color:var(--ink-70)}
+ol.sources li::before{content:counter(src);position:absolute;left:0;top:.85rem;
+  color:var(--rust);font-weight:600}
+ol.sources li:last-child{border-bottom:1px solid var(--ink-12)}
+ol.sources li{scroll-margin-top:5.5rem}
+ol.sources li:target{background:var(--ink-06);box-shadow:-.6rem 0 0 var(--ink-06),.6rem 0 0 var(--ink-06)}
+ol.sources b{color:var(--ink);font-weight:500}
+ol.sources a{color:var(--ink-70)}
+.tier{display:inline-block;font-family:var(--mono);font-size:.84em;letter-spacing:.06em;
+  text-transform:uppercase;border:1px solid var(--ink-12);background:var(--paper);
+  padding:.08em .5em;margin-left:.4em;color:var(--ink-55);white-space:nowrap}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "name": "Memory Benchmark Reporting Checklist (MBRC) 1.0",
+  "headline": "A benchmark number means nothing without its setup.",
+  "description": "Ten rules and a reporting form for comparable evaluation of long-term memory systems.",
+  "url": "https://patric-zeller.de/MBRC",
+  "inLanguage": "en",
+  "version": "1.0",
+  "datePublished": "2026-09-15",
+  "dateModified": "2026-09-15",
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "image": "https://patric-zeller.de/images/mbrc-card.png",
+  "author": { "@type": "Person", "name": "Patric Zeller", "url": "https://patric-zeller.de/" },
+  "publisher": { "@type": "Person", "name": "Patric Zeller" },
+  "isAccessibleForFree": true
+}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead wrap">
+  <div class="full">
+    <a class="sigil" href="/MBRC">MBRC <span>· reporting checklist</span></a>
+    <nav class="main" aria-label="Main">
+      <a href="#why">Why</a>
+      <a href="#rules">Rules</a>
+      <a href="#verdicts">Verdicts</a>
+      <a href="#form">Reporting form</a>
+      <a href="#who">Who runs this</a>
+      <a href="#limitations">Limitations</a>
+      <a href="#sources">Sources</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main" class="wrap">
+
+  <div class="hero full">
+    <div class="hero-grid">
+      <div>
+        <p class="kicker">Memory Benchmark Reporting Checklist</p>
+        <h1>A benchmark number means nothing without <em>its setup</em>.</h1>
+        <p class="lede">Ten rules, one verdict per criterion, one machine-readable result file.
+        MBRC does not tell you what to build or which benchmark to run. It specifies what has
+        to be written down before a number can be compared to anyone else's.</p>
+        <p class="disclaim">An independent proposal by its author. Not issued, endorsed,
+        accredited or reviewed by any standards body, journal or conference.</p>
+      </div>
+
+      <div class="kpi" role="group" aria-label="Three published figures for one system">
+        <div class="kpi-head"><b>One product name</b><span>one benchmark · three protocols</span></div>
+        <div class="kpi-row"><span class="k">Vendor research page, no visible date
+          <span class="src">reader and judge both gpt-5.4, 500 questions, retrieval depths stated<sup class="ref"><a href="#s1">1</a></sup></span></span>
+          <span class="v">90.2</span></div>
+        <div class="kpi-row"><span class="k">The same vendor's preprint, 20 Jan 2025
+          <span class="src">reader gpt-4o, judge GPT-4o, subset LongMemEval_S<sup class="ref"><a href="#s2">2</a></sup></span></span>
+          <span class="v">71.2</span></div>
+        <div class="kpi-row"><span class="k">Unified re-measurement of twelve systems, 23 Jun 2026
+          <span class="src">system version, subset and question count not stated<sup class="ref"><a href="#s3">3</a></sup></span></span>
+          <span class="v">48.0</span></div>
+        <div class="kpi-note">The two dated figures are seventeen months apart, and each is correctly
+          reported for the protocol it ran under. <b>They still cannot be read against each
+          other.</b></div>
+      </div>
+    </div>
+
+    <div class="note">
+      <h4>What this card shows</h4>
+      <p>Three defensible measurements of one product name. Two of the three document their
+      protocol in some detail — more than this field usually manages, and more than the reader of a
+      single headline number would guess. They are still not comparable: seventeen months separate
+      the two that carry a date, the third shows none, the reader models belong to different
+      generations, and no source states which version of the system was measured. That is a reporting-convention
+      problem, not a vendor problem.</p>
+      <p>The same card could be drawn for our own system, and we expect it would look no better.
+      The standard of scrutiny applied here to a vendor figure applies equally to a re-measurement
+      that lands far below one — see <a href="#rules">R7</a>. Every figure on this page is listed
+      with its source, its date and the conditions it was measured under in
+      <a href="#sources">section 07</a>; a figure without those three things does not belong on a
+      page that asks others to supply them.</p>
+    </div>
+
+    <div class="herometa">
+      <span><b>Version</b>1.0</span>
+      <span><b>Status</b>open for comment</span>
+      <span><b>Licence</b>CC BY 4.0 · schema CC0 1.0</span>
+      <span><b>Maintainer</b>Patric Zeller</span>
+    </div>
+  </div>
+
+  <!-- ============ 01 WHY ============ -->
+  <section id="why" class="wrap">
+    <p class="secnum text">01 — Why</p>
+    <h2 class="text">A checklist, not a benchmark</h2>
+    <p class="lead-sub text">The field does not lack benchmarks, and since early 2026 it no longer
+    lacks reporting frameworks either. What is missing is one that knows what a memory system can
+    fail at.</p>
+
+    <aside class="aside">Reporting standard<br>· not a method mandate</aside>
+    <p class="text">LongMemEval<sup class="ref"><a href="#s7">7</a></sup>,
+    BEAM<sup class="ref"><a href="#s9">9</a></sup>, Memora<sup class="ref"><a href="#s5">5</a></sup>,
+    MemoryAgentBench<sup class="ref"><a href="#s10">10</a></sup>,
+    LoCoMo<sup class="ref"><a href="#s11">11</a></sup> and a dozen others were published inside two
+    years. The consequence is visible every quarter: vendors publish figures that contradict each
+    other, re-measurements contradict the vendors, and every comparison collapses into an argument
+    about setup. The card at the top of this page is one instance of it, and it is not the
+    interesting one — the interesting part is that all three of those numbers were reported in good
+    faith.</p>
+    <p class="text">Independent work has reached the same conclusion in print: memory leaderboards
+    are not interpretable without the full protocol — ingestion granularity, raw-text preservation,
+    retrieval budget, retrieval modality, rubric audit, judge choice.<sup class="ref"><a href="#s33">33</a></sup>
+    MBRC is an attempt to write that protocol down once, so that it stops being rediscovered one
+    paper at a time.</p>
+
+    <h3 class="text">What already exists</h3>
+    <p class="text">A new reporting format has to justify itself against the ones already in use,
+    because a sixth format that duplicates five others raises the cost of compliance without
+    creating comparability. Here is the field as of August 2026, and what each of them leaves open
+    for a measurement of a memory system.</p>
+
+    <div class="wide">
+      <table>
+        <caption>Existing reporting frameworks, and the gap each leaves for this class of system</caption>
+        <thead>
+          <tr>
+            <th scope="col" style="width:14rem">Framework</th>
+            <th scope="col">What it settles</th>
+            <th scope="col">What it leaves open here</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>NIST AI 800-2, public draft<sup class="ref"><a href="#s21">21</a></sup></td>
+            <td>Protocol design, judge quality, contamination, uncertainty quantification, run
+              logging, qualified claims. Practice 3.2 recommends an interoperable reporting
+              schema.</td>
+            <td>Recommends a schema without specifying one, and is deliberately general: no control
+              arm against a reader with no memory, no ingestion cost, no staleness.</td>
+          </tr>
+          <tr>
+            <td>Evaluation Cards<sup class="ref"><a href="#s22">22</a></sup></td>
+            <td>An interpretive layer over published results, with reporting completeness and score
+              comparability as explicit signals, backed by a live registry.</td>
+            <td>Benchmark- and model-centred. It reads results that exist; it does not specify the
+              conditions of a single run of a system under test.</td>
+          </tr>
+          <tr>
+            <td>Agentic Benchmark Checklist<sup class="ref"><a href="#s20">20</a></sup></td>
+            <td>Task validity, outcome validity and thirteen reporting checks for agent benchmarks,
+              with ten benchmarks audited against them.</td>
+            <td>No normed machine-readable result record, and agent task completion rather than
+              recall, staleness and forgetting over time.</td>
+          </tr>
+          <tr>
+            <td>Rollout Cards<sup class="ref"><a href="#s23">23</a></sup></td>
+            <td>A reproducibility record for agent research: typed row schemas, versioned scoring
+              scripts, a drops manifest.</td>
+            <td>Episode evidence. Not the accuracy, cost and control-arm triple that decides whether
+              a memory figure means anything.</td>
+          </tr>
+          <tr>
+            <td>BenchmarkCards<sup class="ref"><a href="#s24">24</a></sup></td>
+            <td>Documentation of a benchmark: purpose, data, methodology, targeted risks, ethical
+              and legal considerations.</td>
+            <td>Documents the benchmark, not the run. Prompts, seeds, significance tests and judge
+              configuration are out of scope by design.</td>
+          </tr>
+          <tr>
+            <td>Minimum Reproducibility Disclosure, 2025<sup class="ref"><a href="#s32">32</a></sup></td>
+            <td>An eight-dimension disclosure checklist for memory evaluation — temporal governance,
+              freshness, leakage auditing, model and parameters, retrieval, memory settings, cost,
+              limitations — with a YAML template, in the appendix of a survey.</td>
+            <td>Disclosure without verdicts: no control arms, no outcome per criterion, no pinned
+              checksums, no validator. To our knowledge no published evaluation has used it.</td>
+          </tr>
+          <tr>
+            <td>Agent Memory Leaderboard, August 2026<sup class="ref"><a href="#s38">38</a></sup></td>
+            <td>One evaluation contract for several dozen systems: fixed answer model, hashed
+              datasets and pipeline, versioned submissions.</td>
+            <td>Judge model and prompts undisclosed, no run counts or intervals published, and
+              vendors on the board among the partners — the three things R2, R4 and R7 exist
+              for.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text">The closest thing to a predecessor is not in the table. A 2025 survey of memory
+    in language models carries, in an appendix, a "Minimum Reproducibility Disclosure" checklist —
+    eight dimensions from temporal governance to memory settings, with a YAML template — and a call
+    for a minimally sufficient evaluation card.<sup class="ref"><a href="#s32">32</a></sup> It is a
+    disclosure schema, and to our knowledge no published evaluation has used it. MBRC takes the
+    same view of the problem and goes three steps further: a verdict per criterion instead of a
+    disclosure, mandatory control arms, and a record a machine can reject. Two of its ten rules
+    exist only because the subject is memory. <b>R9</b> requires three control arms — no memory,
+    full context, corrupted memory — because without them a memory figure cannot be distinguished
+    from the reader's own knowledge or from a long context window. <b>R10</b> requires the question
+    set, the answer key and the judge prompt to be pinned by checksum, because in this corner of the
+    field answer keys demonstrably change. Of the frameworks above, none asks for the control arms,
+    and only the leaderboard pins its data by hash — for its own runs, not for anyone else reporting
+    a figure.</p>
+
+    <p class="text">Compatibility is a debt, not a claim: MBRC 1.0 states its own fields, and a
+    field-by-field mapping onto NIST AI 800-2 §3.2 and onto the dataset metadata already mandated at
+    one major venue is the first thing the next version owes.</p>
+
+    <h3 class="text">Where the shape comes from, and where it does not</h3>
+    <p class="text">The shape is borrowed from medicine. CONSORT and PRISMA never told anyone how to
+    run a trial; they specified what a published report must contain. That is what MBRC is: neutral
+    on architecture, neutral on which benchmark you pick, opinionated only about disclosure.</p>
+
+    <p class="text">The <em>process</em> is not borrowed, and claiming otherwise would be the first
+    thing a reader should disbelieve. Those guidelines were built through Delphi rounds with
+    hundreds of participants, multi-day consensus meetings, piloting, and explanation documents
+    running to tens of thousands of words.<sup class="ref"><a href="#s26">26</a></sup> This document
+    has one author. The closer precedent outside medicine is REFORMS — thirty-two items agreed by
+    nineteen researchers across five disciplines after a workshop, without a formal
+    Delphi<sup class="ref"><a href="#s25">25</a></sup> — and nineteen is still nineteen. So: this is
+    a proposal, published so that it can be argued with, with the disclosure it asks of others
+    applied to itself. <a href="#limitations">Section 06</a> says what it does not have.</p>
+
+    <p class="text">Adoption cost is the design constraint. The rules below are the reasoning; the
+    form in section 04 is the standard in practice. Fill it in, publish the file next to your
+    number, and the number becomes comparable.</p>
+  </section>
+
+  <!-- ============ 02 RULES ============ -->
+  <section id="rules" class="wrap">
+    <p class="secnum text">02 — The ten rules</p>
+    <h2 class="text">Each rule exists because of a documented failure</h2>
+    <p class="lead-sub text">Not because of a principle. Sources are named so you can check both
+    things: whether the failure was real, and whether the rule follows from it.</p>
+
+    <div class="wide">
+      <table>
+        <caption>The ten rules in one screen. Each is set out with its reasoning below; if a rule is
+        violated, the run is not evaluable and is not reported.</caption>
+        <thead>
+          <tr><th scope="col" style="width:4rem">No.</th><th scope="col" style="width:19rem">Rule</th><th scope="col">Because</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>R1</td><td>Fix the reader, vary the memory</td><td>otherwise the comparison measures the language model, not the memory</td></tr>
+          <tr><td>R2</td><td>Pin the judge, calibrate it in both directions</td><td>a rejection-only test is passed by a judge that rejects everything</td></tr>
+          <tr><td>R3</td><td>Score nuggets, not right or wrong</td><td>binary verdicts hide partial correctness and add noise</td></tr>
+          <tr><td>R4</td><td>Enough tasks first, then enough runs</td><td>the sampling unit is the task; repeating one run measures the serving stack</td></tr>
+          <tr><td>R5</td><td>Accuracy without cost is half a result</td><td>tokens, latency and ingestion cost belong in the same table</td></tr>
+          <tr><td>R6</td><td>Measure modules separately</td><td>an aggregate does not say which part carries it</td></tr>
+          <tr><td>R7</td><td>Never compare against a foreign blog figure</td><td>differing conditions; such figures are marked, not used</td></tr>
+          <tr><td>R8</td><td>Not measurable means not measurable</td><td>four states, never two: passed, breached, not measurable, no object</td></tr>
+          <tr><td>R9</td><td>Run the controls that can falsify the result</td><td>without a no-memory, full-context and corrupted-memory arm, the figure has no referent</td></tr>
+          <tr><td>R10</td><td>Declare what the reader already knew</td><td>public benchmarks age into training data, and answer keys get corrected</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="text">
+
+      <div class="rule">
+        <h3><span class="rid">R1</span>Fix the reader, vary the memory</h3>
+        <p>A memory benchmark measures memory only if the answering model is identical across all
+        arms: same model, same version, same temperature, same answer prompt, same random seed, same
+        task order. Repeating results with a different reader is a <em>separate run</em>, reported
+        separately — not the same number.</p>
+        <p>Measure every arm inside one window and say which. Hosted models change underneath a
+        study; a comparison run two months apart is a comparison of two model versions wearing the
+        names of two memory systems.</p>
+        <p>The context budget is a <b>ceiling</b>, identical across arms — not an identical fill.
+        The distinction is not pedantry: if every arm had to place the same number of tokens in
+        context, there would be no context reduction left to report under R5, and the full-context
+        control arm of R9 could be trimmed at will to flatter the memory system.</p>
+      </div>
+      <aside class="aside">Precedent<br>LongMemEval-V2<br>arXiv:2605.12493<sup class="ref"><a href="#s8">8</a></sup></aside>
+
+      <div class="rule">
+        <h3><span class="rid">R2</span>Pin the judge, calibrate it in both directions</h3>
+        <p>LLM-as-a-judge is the de-facto standard, and an uncalibrated judge produces figures with
+        no information in them. Before any run, pin judge model, version and prompt. Then calibrate
+        both directions, because a one-directional test is trivially passed:</p>
+        <ul>
+          <li><b>Rejection</b> — at least 150 deliberately wrong but plausible answers.</li>
+          <li><b>Acceptance</b> — at least 150 independently verified correct answers.</li>
+          <li><b>Gate</b> — the lower bound of the 95 % Wilson interval of <em>both</em> rates is at
+          least 0.90.</li>
+        </ul>
+        <p>Why both directions: a judge that rejects everything passes a rejection-only test at
+        100 %, and any judge can be pushed past a one-sided threshold by sharpening its prompt until
+        it gets there. An over-strict judge does not fail loudly — it compresses the field and makes
+        two unequal systems look alike.</p>
+        <p>Why an interval and not a bare count: at 95 correct rejections out of 100, the Wilson
+        interval runs from 0.888 to 0.978, so the observation is compatible with a true rate of
+        89 %. Conversely a judge whose true rate is exactly 0.95 fails a "95 of 100" gate in 38 % of
+        attempts. A threshold that decides by coin flip in its own neighbourhood is not a
+        threshold.</p>
+        <p>Agreement with human annotation: at least 300 stratified samples, reported as the raw
+        agreement rate, the full contingency table, and both Gwet's AC1 and Cohen's κ with bootstrap
+        confidence intervals. κ on its own misleads here, because it corrects against a chance
+        expectation computed from the observed marginals: a judge that accepts most answers can show
+        κ near 0.04 while agreeing with the human 85 % of the time.<sup class="ref"><a href="#s13">13</a></sup>
+        Report the rate and the table, not only the coefficient.</p>
+        <p>Report as well, for the judge: swap consistency on pairwise judgements, the shift in
+        verdict at ±50 % answer length, test-retest agreement over three repetitions of the same
+        prompt, stability across two prompt rewordings, and whether judge and reader come from the
+        same model family.<sup class="ref"><a href="#s12">12</a></sup> A calibration holds only for
+        the task categories it was measured on.</p>
+        <p>None of this is peculiar to memory. A 2026 analysis of judge-agreement reporting shows
+        that protocol choices alone — the judgment scale, which cases are retained, how abstentions
+        are handled, how verdicts are pooled — move a reported accuracy from 0.551 to 0.899 and carry
+        κ across zero without changing a single verdict; it distils the remedy into a reporting
+        checklist that makes agreement claims reconstructible and
+        comparable.<sup class="ref"><a href="#s34">34</a></sup> A second line of work estimates a judge's
+        true-positive and false-positive rates on a small human-labelled calibration set and derives
+        a corrected decision threshold from them — the same two directions, put to statistical
+        use.<sup class="ref"><a href="#s35">35</a></sup></p>
+        <p>If either gate fails, the judge is unfit. That is not a finding about the system under
+        test.</p>
+        <p>What is at stake is measurable. In a published audit of LoCoMo scoring, a judge
+        configuration in common use accepted <b>62.81 %</b> of deliberately wrong but topically
+        plausible answers. The same judge caught concrete factual errors — wrong name, wrong date —
+        at around 89 %, so the failure is specific to vague-but-relevant text rather than
+        general.<sup class="ref"><a href="#s4">4</a></sup></p>
+        <p>We have not independently reproduced that result, and its publisher sells a memory
+        product of its own rather than acting as an independent auditor. We cite it because the
+        underlying data, the scripts and all 99 disputed cases are published and
+        checksum-verifiable — which is the standard this checklist applies to itself.</p>
+        <details>
+          <summary>On where the threshold comes from</summary>
+          <div class="body">
+            <p>The 0.90 lower bound is a convention, not a derivation. It sits below the highest
+            judge–human agreement published for a memory benchmark that we are aware of — 88.3 %,
+            reported by Memora<sup class="ref"><a href="#s5">5</a></sup>, with LongMemEval reporting
+            agreement for its own evaluator as well<sup class="ref"><a href="#s7">7</a></sup> — and
+            far above the 62.81 % measured in the audit. Setting it as an interval bound rather than
+            a point estimate is the part that is derived: it is what makes the gate insensitive to
+            the sample size a reporter happens to choose.</p>
+            <p>A worked justification, with the operating characteristic of the gate at several
+            sample sizes, belongs in the explanation document that accompanies the next version.
+            Until it exists, treat the number as what it is: a defensible convention, published so
+            that it can be argued with.</p>
+          </div>
+        </details>
+      </div>
+
+      <div class="rule">
+        <h3><span class="rid">R3</span>Score nuggets, not right or wrong</h3>
+        <p>Decompose each answer into atomic criteria, score each at 0 / 0.5 / 1, average.
+        Materially less noisy than a binary verdict, and it gives partial credit where partial
+        credit is what actually happened.</p>
+        <p>Report precision over nuggets alongside recall. An average over the criteria a system
+        hit, with no penalty for what else it said, rewards saying everything. Weight the criteria
+        as well: a system that misses the central claim and catches five side details should not
+        outscore the reverse.</p>
+        <p>State where the nugget set came from and pin it. If the model that generates the criteria
+        is the model that matches them, the score is circular; if the set is pooled from the
+        candidate answers, it inherits their blind spots. State also whether the average runs over
+        nuggets or over tasks — the two give different numbers.</p>
+        <p>For ordering tasks, name the coefficient. Kendall tau-b and Spearman weight every
+        position equally, which is the wrong shape for retrieval, where an error at rank 1 costs
+        more than one at rank 20; rank-biased overlap is head-weighted and handles lists of
+        different length. Declare the tie treatment either way.</p>
+      </div>
+      <aside class="aside">Precedent<br>BEAM, ICLR 2026<br>arXiv:2510.27246<sup class="ref"><a href="#s9">9</a></sup></aside>
+
+      <div class="rule">
+        <h3><span class="rid">R4</span>Enough tasks first, then enough runs</h3>
+        <p>A single run is not a result — but the run count is the smaller half of the problem. The
+        sampling unit is the task, not the run.<sup class="ref"><a href="#s14">14</a></sup></p>
+        <p>State the smallest difference you would act on, and the number of tasks that gives 80 %
+        power to detect it. Paired across tasks, five percentage points needs roughly 280 tasks and
+        three points roughly 790. A report that prescribes a run count and says nothing about the
+        task count is regulating the wrong quantity; underpowered comparisons are the documented
+        norm in this literature, not the exception.<sup class="ref"><a href="#s15">15</a></sup></p>
+        <p>Then replicate: at least five complete replicates with documented, distinct random seeds
+        <em>and</em> permuted ingestion order. Ten repetitions of an identical run at temperature
+        zero mostly measure the batching non-determinism of the serving stack — in one published
+        measurement, 1,000 identical requests at temperature zero produced 80 distinct
+        outputs.<sup class="ref"><a href="#s16">16</a></sup> Name what varies: seeds, ingestion
+        order, index construction. Repeating what does not vary is not replication.</p>
+        <p>Report the mean with its standard error across tasks, clustered where questions are
+        nested; the between-replicate dispersion separately from it; and every seed.</p>
+        <p>For two-arm comparisons use a paired test across tasks: a paired permutation test or a
+        paired bootstrap, McNemar where outcomes are binary. Wilcoxon assumes a symmetric difference
+        distribution and degrades badly on the ties that 0 / 0.5 / 1 scoring produces. Report the
+        mean paired difference with its 95 % interval, not a p-value on its own.</p>
+        <p>Where several categories are compared, name the primary hypothesis in advance, control
+        the false discovery rate across the rest, and report how many tests were run in total. At
+        ten categories and α = 0.05, at least one false positive is more likely than none — 0.40.</p>
+        <p>None of these prescriptions is idiosyncratic. A 2025 survey of memory evaluation arrives
+        at the same set — paired permutation or bootstrap tests, effect sizes, agreement coefficients
+        with intervals — from the other side of the field.<sup class="ref"><a href="#s32">32</a></sup></p>
+        <p>The reason this matters here: in a re-analysis of published LoCoMo results, 56 % of
+        adjacent-pair per-category comparisons fell inside each other's 95 % Wilson intervals —
+        indistinguishable from noise at a single measurement. Category sizes in that benchmark range
+        from 96 to 841 questions, a ratio of 8.8, so in the smallest category two systems need a gap
+        of more than 15 points before they can be told apart at
+        all.<sup class="ref"><a href="#s6">6</a></sup> Same provenance and same caveat as under R2:
+        a market participant, not reproduced by us, published with its data.</p>
+      </div>
+
+      <aside class="aside">Reporting practice<br>for reproducible<br>evaluation<br>arXiv:2405.14782<sup class="ref"><a href="#s28">28</a></sup></aside>
+
+      <div class="rule">
+        <h3><span class="rid">R5</span>Accuracy without cost is half a result</h3>
+        <p>Every accuracy figure ships with the cost of producing it, on both sides of the system.</p>
+        <p><b>Query side.</b> Tokens per query, split into input, cached input and output; latency
+        p50, p95 and p99, split into retrieval time and end-to-end; and context reduction against
+        what full text would have cost.</p>
+        <p><b>Ingestion side.</b> Tokens and wall time to ingest, embed, compress, consolidate and
+        index — once and recurring, per stored unit — plus storage and its growth over time. A
+        system that spends a hundred times more on ingestion than on querying looks inexpensive in a
+        query-only table, and the comparison against a full-context arm becomes meaningless.</p>
+        <p>The scale of the ingestion side is not hypothetical. A controlled harness study in August
+        2026 moved three widely used production systems out of its main comparison and into a
+        separate cost appendix, because their pipelines carry substantially different
+        auxiliary-model budgets from the rest of the field.<sup class="ref"><a href="#s36">36</a></sup>
+        A figure that hides that difference is not comparable to one that does not.</p>
+        <p><b>Conditions.</b> A latency figure without its conditions is not a figure: hardware and
+        region, concurrency and request rate, warm-up and cache-hit rate, the number of measurements
+        per cell, and the measurement window. Below roughly 200 measurements per cell the upper
+        confidence bound of a p95 is the observed maximum — report the count, or do not report the
+        percentile.</p>
+        <p>A system reaching 95 % by pushing 100,000 tokens into context has moved the problem, not
+        solved it. Where no language model sits in the evaluated path, R5 has no object — say so
+        rather than leaving the fields blank.</p>
+      </div>
+
+      <div class="rule">
+        <h3><span class="rid">R6</span>Measure modules separately, not just end to end</h3>
+        <p>A weak aggregate cannot be attributed. Report retrieval, extraction, routing and
+        maintenance as separate figures, then the full system with a fixed reader. The module
+        figures are the diagnostic ones; the end-to-end figure is the comparable one.</p>
+        <p>Where a system has no separable module of a given kind, that entry is <em>no object</em>
+        under R8 — not a gap, and not a zero.</p>
+      </div>
+      <aside class="aside">Precedent<br>12 systems, uniform<br>conditions, June 2026<br>arXiv:2606.24775<sup class="ref"><a href="#s3">3</a></sup></aside>
+
+      <div class="rule">
+        <h3><span class="rid">R7</span>Never compare against a foreign blog figure</h3>
+        <p>A comparison holds only if reader model, judge, question subset and setup are shared and
+        published. Everything else is marked <em>not comparable</em> in the report — explicitly
+        devalued, not quietly omitted.</p>
+        <p>This rule cuts both ways. A re-measurement landing far below a vendor figure is a
+        comparability problem, not a truth claim, and deserves the same disclosure scrutiny —
+        including whether an author of the re-measurement has a system in the test field.</p>
+      </div>
+
+      <div class="rule">
+        <h3><span class="rid">R8</span>Not measurable means not measurable</h3>
+        <p>Four states, never two. A criterion that could not be measured is never reported as
+        passed, and never as breached with a zero: <em>not measurable</em> is an outcome in its own
+        right and carries no penalty. Where a criterion has no subject matter for the unit under
+        test at all, that is the fourth state, <em>no object</em>, and it is likewise not a
+        failure.</p>
+        <p>The two are kept apart because they are repaired differently. A not-measurable result is
+        a gap in the run and can be closed by running it again properly. A no-object result is a
+        property of what was tested and will not change. Collapsing either into a zero turns an
+        absent measurement into a bad one, and penalises a system for a criterion the run could not
+        establish. Quietly dropping it does the opposite: it rewards whoever measured least.
+        Counting it as a state of its own is the only treatment that does neither.</p>
+      </div>
+
+      <div class="rule">
+        <h3><span class="rid">R9</span>Run the controls that can falsify the result</h3>
+        <p>A setup that can only confirm confirms nothing. Three control arms, all mandatory, all
+        reported whether or not they flatter the result:</p>
+        <ul>
+          <li><b>No memory.</b> The same reader, the same questions, no retrieved context at all.
+          Whatever it scores is the floor the benchmark hands out for free. If the margin over this
+          arm is small, the benchmark is measuring the reader's prior knowledge, not memory.</li>
+          <li><b>Full context.</b> The same reader with the entire source text in context and no
+          memory system. Wherever the corpus fits a current context window this arm is not optional:
+          without it, every figure can be answered with "you measured context length". Peer-reviewed
+          setups now run to ten million tokens, so the excuse that it cannot be done has a short
+          remaining life.<sup class="ref"><a href="#s9">9</a></sup></li>
+          <li><b>Corrupted memory.</b> The same run with the store emptied, or filled with wrong
+          entries. If accuracy does not fall, the memory is not being used and the number belongs to
+          something else.</li>
+        </ul>
+        <p>The informative quantity is the distance between the full system and these arms, not the
+        absolute value. Report all three distances. Where a distance is smaller than the dispersion
+        established under R4, say so plainly — that is a legitimate result, and under R8 it is
+        reported as a finding rather than hidden as a rounding.</p>
+      </div>
+      <aside class="aside">The memory-specific rule<br>· no general benchmark<br>standard requires<br>these three arms</aside>
+
+      <div class="rule">
+        <h3><span class="rid">R10</span>Declare what the reader already knew, and pin what you measured</h3>
+        <p>Public benchmarks age into training data. State whether the question set is public and
+        since when, how that relates to the reader model's training cutoff, and whether canary
+        strings or a private holdout were used. Contamination in closed models is documented
+        practice, not a hypothetical.<sup class="ref"><a href="#s18">18</a></sup> R9's no-memory arm
+        is the empirical half of this rule; this is the declared half.</p>
+        <p>Pin the material: semantic version and SHA-256 of the question set, of the gold answers,
+        of the nugget set and of the judge prompt. Answer keys do get corrected — the audit cited
+        under R2 found 99 score-corrupting errors in 1,540 questions, which puts the ceiling for a
+        flawless system at 93.57 % rather than 100 %.<sup class="ref"><a href="#s4">4</a></sup> A
+        figure measured against a corrected key is not comparable to one measured against the
+        previous key, and neither is wrong; they are simply different measurements, which is the
+        whole subject of this document.</p>
+        <p>The case is already real. A revised LoCoMo released in April 2026 revised 337 of its
+        question–answer pairs, set the count at 1,382 questions and changed the judge; figures on
+        the revised set now circulate next to figures on the original, and the two are not the same
+        measurement.<sup class="ref"><a href="#s37">37</a></sup> In one survey of the field, 62 % of
+        all benchmark–system pairs draw on LoCoMo and LongMemEval, so the question of which key was
+        used is not a corner case.<sup class="ref"><a href="#s36">36</a></sup></p>
+        <p>Keep the development set and the test set apart. Prompt engineering, threshold tuning and
+        retrieval parameters belong to the development set. Report how many times the test set was
+        evaluated, and report every run that was carried out, including the ones not used. Selective
+        disclosure of runs and variants is a documented practice in public
+        leaderboards.<sup class="ref"><a href="#s19">19</a></sup></p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ 03 VERDICTS ============ -->
+  <section id="verdicts" class="wrap">
+    <p class="secnum text">03 — Verdicts</p>
+    <h2 class="text">Four states, per criterion, never aggregated</h2>
+    <p class="text">A composite score lets a clean result in one dimension pay for a broken one in
+    another. Report each criterion on its own, in exactly one of four states: two of them are the
+    outcome of a measurement, and two of them record that no measurement stands behind the
+    entry.</p>
+
+    <div class="wide">
+      <table>
+        <caption>The four permitted states of a single criterion under MBRC 1.0. A record may not use any other.</caption>
+        <thead>
+          <tr><th scope="col" style="width:11rem">Outcome</th><th scope="col">Meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="status st-pass">Passed</span></td>
+            <td>Measured under the disclosed setup, met its stated threshold.</td>
+          </tr>
+          <tr>
+            <td><span class="status st-breach">Breached</span></td>
+            <td>Measured under the disclosed setup, missed its threshold. A finding for that
+              criterion, not for the system as a whole.</td>
+          </tr>
+          <tr>
+            <td><span class="status st-nm">Not measurable</span></td>
+            <td>The criterion applies and would be informative, but the measurement failed or could
+              not be carried out. Never collapsed into any of the others.</td>
+          </tr>
+          <tr>
+            <td><span class="status st-no">No object</span></td>
+            <td>The criterion has no subject matter for this unit — the metric is undefined here
+              rather than unmeasured. Reported, not judged.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note text">
+      <h4>How undefined values are handled</h4>
+      <p>Never as zero, and never silently dropped. Excluding them from an aggregate without
+      counting them rewards the broken system: the worse the retrieval, the more queries fall out of
+      scoring. Counting them as zero does the opposite and penalises a system for a question the run
+      could not put to it.</p>
+      <p>Report the metric in three forms instead — on the defined cases only, with every undefined
+      case counted as a failure, and with every one counted as a success. The latter two are the
+      identification bounds: the range the true value must lie in. Report the count and the share of
+      undefined cases per arm and per category, and state whether the failures look independent of
+      the result or correlated with it. In a memory system they are usually correlated, because a
+      value goes undefined precisely where retrieval failed — which is the case in which ignoring
+      them distorts most.</p>
+      <p>Above 10 % undefined, the point estimate is quotable only together with its bounds. There
+      is deliberately no share above which a unit drops out of the report: a percentage cut-off has
+      no methodological basis — the missing-data literature says so in its
+      title<sup class="ref"><a href="#s17">17</a></sup> — and a cut-off creates an incentive to get
+      past it rather than to measure. What decides is the failure mechanism, not the share. For
+      scale: at one third undefined and 80 % accuracy on the rest, the bounds run from 0.53 to
+      0.87, which is a third of the scale.</p>
+    </div>
+  </section>
+
+  <!-- ============ 04 FORM ============ -->
+  <section id="form" class="wrap">
+    <p class="secnum text">04 — The reporting form</p>
+    <h2 class="text">This is the standard in practice</h2>
+    <p class="lead-sub text">Fill it in, generate the file, publish it alongside your number.</p>
+    <p class="text">Fields marked <span style="color:var(--rust)">*</span> are required. Some become
+    required only once an earlier answer makes them apply — declare that no language model sits in
+    the evaluated path and the whole cost block turns into <em>no object</em> rather than into empty
+    fields. Most reports will leave at least one block that way, and that is the intended use.</p>
+    <p class="text">This form runs entirely in your browser. What you type is never sent to this
+    site or to anyone else — the JSON file is built locally on your device. You do not have to take
+    that on trust: the page is served with a content policy that forbids it from opening any network
+    connection at all and from submitting a form anywhere
+    (<code>connect-src 'none'; form-action 'none'</code>), which your browser enforces whatever this
+    page says. It stores nothing on your device either — no cookies, no local storage. Loading the
+    page is an ordinary web request to the hosting provider, which records standard server log data;
+    see the privacy notice linked at the foot of the page.</p>
+
+    <div class="record full">
+      <div class="record-head"><b>MBRC result record</b><span>schema MBRC/1.0</span></div>
+
+      <form id="mbrc" novalidate>
+
+        <fieldset>
+          <legend>System under test</legend>
+          <div class="fields">
+            <div class="field"><label for="sys_name">System name <span class="req">*</span></label><input id="sys_name" required></div>
+            <div class="field"><label for="sys_version">Version or build <span class="req">*</span></label><input id="sys_version" required></div>
+            <div class="field"><label for="sys_commit">Commit or artifact id</label><input id="sys_commit"></div>
+            <div class="field"><label for="run_date">Run date <span class="req">*</span></label><input id="run_date" required placeholder="YYYY-MM-DD"></div>
+            <div class="field wide"><label for="sys_config">Configuration affecting results <span class="req">*</span></label><input id="sys_config" required placeholder="retrieval depths, thresholds, decay, consolidation settings"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Benchmark</legend>
+          <div class="fields">
+            <div class="field"><label for="bench">Benchmark <span class="req">*</span></label><input id="bench" required></div>
+            <div class="field"><label for="bench_version">Benchmark version or release <span class="req">*</span></label><input id="bench_version" required placeholder="tag, release date or commit"></div>
+            <div class="field"><label for="bench_subset">Subset or split <span class="req">*</span></label><input id="bench_subset" required></div>
+            <div class="field"><label for="bench_n">Questions <span class="req">*</span></label><input id="bench_n" type="number" min="1" required></div>
+            <div class="field wide"><label for="bench_excl">Exclusions and why</label><input id="bench_excl" placeholder="or: none"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>R1 — Reader</legend>
+          <div class="fields">
+            <div class="field"><label for="reader_model">Reader model <span class="req">*</span></label><input id="reader_model" required></div>
+            <div class="field"><label for="reader_version">Reader version <span class="req">*</span></label><input id="reader_version" required></div>
+            <div class="field"><label for="reader_temp">Temperature <span class="req">*</span></label><input id="reader_temp" required placeholder="0.0"></div>
+            <div class="field"><label for="reader_ctx">Context budget ceiling, tokens <span class="req">*</span></label><input id="reader_ctx" required placeholder="identical cap across arms, not an identical fill"></div>
+            <div class="field"><label for="reader_seed">Random seed <span class="req">*</span></label><input id="reader_seed" required placeholder="or: not settable — described under limitations"></div>
+            <div class="field"><label for="meas_window">Measurement window <span class="req">*</span></label><input id="meas_window" required placeholder="all arms measured between YYYY-MM-DD and YYYY-MM-DD"></div>
+            <div class="field wide"><label for="reader_prompt">Answer prompt identical across arms? <span class="req">*</span></label>
+              <select id="reader_prompt" required>
+                <option value="">select</option>
+                <option value="identical">Identical across all arms</option>
+                <option value="differs">Differs — described under limitations</option>
+              </select></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>R2 — Judge and calibration</legend>
+          <div class="fields">
+            <div class="field wide"><label for="judge_used">Judge in the scoring path? <span class="req">*</span></label>
+              <select id="judge_used" required>
+                <option value="">select</option>
+                <option value="yes">Yes, LLM judge</option>
+                <option value="no">No, computed metric only</option>
+              </select></div>
+            <div class="field"><label for="judge_model">Judge model and version <span class="req cond">*</span></label><input id="judge_model"></div>
+            <div class="field"><label for="judge_prompt">Judge prompt version <span class="req cond">*</span></label><input id="judge_prompt"></div>
+            <div class="field"><label for="judge_family">Judge and reader model family <span class="req cond">*</span></label>
+              <select id="judge_family">
+                <option value="">select</option>
+                <option value="different">Different families</option>
+                <option value="same">Same family — self-preference possible</option>
+              </select></div>
+            <div class="field"><label for="judge_reject">Rejection rate on wrong answers, % <span class="req cond">*</span></label><input id="judge_reject" placeholder="lower 95 % Wilson bound ≥ 0.90"></div>
+            <div class="field"><label for="judge_reject_n">Wrong-answer set size <span class="req cond">*</span></label><input id="judge_reject_n" type="number" min="1" placeholder="≥ 150"></div>
+            <div class="field"><label for="judge_accept">Acceptance rate on correct answers, % <span class="req cond">*</span></label><input id="judge_accept"></div>
+            <div class="field"><label for="judge_accept_n">Correct-answer set size <span class="req cond">*</span></label><input id="judge_accept_n" type="number" min="1" placeholder="≥ 150"></div>
+            <div class="field"><label for="judge_agree">Judge–human agreement, % <span class="req cond">*</span></label><input id="judge_agree"></div>
+            <div class="field"><label for="judge_agree_n">Double-scored samples <span class="req cond">*</span></label><input id="judge_agree_n" type="number" min="1" placeholder="≥ 300, stratified"></div>
+            <div class="field"><label for="judge_ac1">Gwet's AC1, with interval <span class="req cond">*</span></label><input id="judge_ac1" placeholder="0.81 [0.74, 0.87]"></div>
+            <div class="field"><label for="judge_kappa">Cohen's κ, with interval <span class="req cond">*</span></label><input id="judge_kappa" placeholder="0.32 [0.06, 0.58]"></div>
+            <div class="field"><label for="judge_kappa_axis">κ comparison axis <span class="req cond">*</span></label><input id="judge_kappa_axis" placeholder="judge vs. human, per-answer verdict"></div>
+            <div class="field wide"><label for="judge_bias">Bias and stability checks <span class="req cond">*</span></label><textarea id="judge_bias" placeholder="Swap consistency on pairwise judgements; verdict shift at ±50 % answer length; test-retest over three repetitions; stability across two prompt rewordings. State results, not intentions."></textarea></div>
+          </div>
+          <p class="hint">If no judge sits in the scoring path, say so above and this block becomes
+          no object. Computed metrics are stronger evidence than judged ones and should be labelled
+          as such.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>R3 and R4 — Scoring, power and dispersion</legend>
+          <div class="fields">
+            <div class="field"><label for="scoring">Scoring scheme <span class="req">*</span></label>
+              <select id="scoring" required>
+                <option value="">select</option>
+                <option value="nugget">Nugget, 0 / 0.5 / 1</option>
+                <option value="binary">Binary</option>
+                <option value="rbo">Rank-biased overlap, ordering</option>
+                <option value="tau_b">Kendall tau-b, ordering</option>
+                <option value="computed">Computed from a fixture</option>
+                <option value="other">Other — described under limitations</option>
+              </select></div>
+            <div class="field"><label for="nugget_source">Origin of the criteria set <span class="req">*</span></label><input id="nugget_source" required placeholder="who or what produced the nuggets; or: no object"></div>
+            <div class="field"><label for="tasks_n">Tasks in the comparison <span class="req">*</span></label><input id="tasks_n" type="number" min="1" required></div>
+            <div class="field"><label for="mde">Smallest difference of interest <span class="req">*</span></label><input id="mde" required placeholder="5 pp, with the task count that gives 80 % power"></div>
+            <div class="field"><label for="runs">Replicates <span class="req">*</span></label><input id="runs" type="number" min="1" required placeholder="≥ 5, with distinct seeds"></div>
+            <div class="field"><label for="seeds">Seeds and what was permuted <span class="req">*</span></label><input id="seeds" required placeholder="seeds; ingestion order; index rebuild"></div>
+            <div class="field"><label for="agg">Aggregation <span class="req">*</span></label>
+              <select id="agg" required>
+                <option value="">select</option>
+                <option value="mean">Mean with standard error</option>
+                <option value="median">Median</option>
+              </select></div>
+            <div class="field"><label for="dispersion">Dispersion reported <span class="req">*</span></label><input id="dispersion" required placeholder="SE across tasks; between-replicate sd separately"></div>
+            <div class="field"><label for="stat_test">Test for arm comparison <span class="req">*</span></label><input id="stat_test" required placeholder="paired permutation over tasks; or: single arm, no comparison"></div>
+            <div class="field"><label for="stat_unit">Statistical unit <span class="req">*</span></label><input id="stat_unit" required placeholder="task, with replicates as a second level"></div>
+            <div class="field"><label for="tests_total">Tests carried out in total <span class="req">*</span></label><input id="tests_total" type="number" min="0" required></div>
+            <div class="field"><label for="multiplicity">Multiplicity handling <span class="req">*</span></label><input id="multiplicity" required placeholder="primary hypothesis named in advance; FDR over the rest; or: single test"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>R5 — Cost alongside accuracy</legend>
+          <div class="fields">
+            <div class="field wide"><label for="r5_applies">Does R5 apply? <span class="req">*</span></label>
+              <select id="r5_applies" required>
+                <option value="">select</option>
+                <option value="yes">Yes, a language model is in the path</option>
+                <option value="no">No object, no language model in the evaluated path</option>
+              </select></div>
+            <div class="field"><label for="tok_in">Tokens per query, input <span class="req cond">*</span></label><input id="tok_in"></div>
+            <div class="field"><label for="tok_cached">Tokens, cached input</label><input id="tok_cached"></div>
+            <div class="field"><label for="tok_out">Tokens, output <span class="req cond">*</span></label><input id="tok_out"></div>
+            <div class="field"><label for="lat_retr">Retrieval latency p50 / p95 / p99 <span class="req cond">*</span></label><input id="lat_retr" placeholder="87 / 155 / 210 ms"></div>
+            <div class="field"><label for="lat_e2e">End-to-end latency p50 / p95 / p99 <span class="req cond">*</span></label><input id="lat_e2e"></div>
+            <div class="field"><label for="lat_n">Measurements per latency cell <span class="req cond">*</span></label><input id="lat_n" type="number" min="1" placeholder="≥ 200 for p95"></div>
+            <div class="field"><label for="hardware">Hardware and region <span class="req cond">*</span></label><input id="hardware" placeholder="instance type, accelerator, region"></div>
+            <div class="field"><label for="concurrency">Concurrency and request rate <span class="req cond">*</span></label><input id="concurrency" placeholder="closed loop, 1 concurrent request"></div>
+            <div class="field"><label for="cache_hit">Cache state and hit rate</label><input id="cache_hit" placeholder="cold / warm, prefix-cache hit rate"></div>
+            <div class="field"><label for="ctx_red">Context reduction vs full text <span class="req cond">*</span></label><input id="ctx_red" placeholder="full-text cost → memory cost"></div>
+            <div class="field"><label for="ingest_tokens">Ingestion tokens per stored unit <span class="req cond">*</span></label><input id="ingest_tokens" placeholder="once and recurring"></div>
+            <div class="field"><label for="ingest_time">Ingestion wall time per stored unit <span class="req cond">*</span></label><input id="ingest_time"></div>
+            <div class="field"><label for="storage">Storage and its growth</label><input id="storage" placeholder="bytes per stored unit; growth over the run"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>R6 — Module breakdown</legend>
+          <div class="fields">
+            <div class="field"><label for="mod_retrieval">Retrieval</label><input id="mod_retrieval" placeholder="or: no object"></div>
+            <div class="field"><label for="mod_extraction">Extraction</label><input id="mod_extraction" placeholder="or: no object"></div>
+            <div class="field"><label for="mod_routing">Routing</label><input id="mod_routing" placeholder="or: no object"></div>
+            <div class="field"><label for="mod_maintenance">Maintenance and forgetting</label><input id="mod_maintenance" placeholder="or: no object"></div>
+            <div class="field wide"><label for="mod_e2e">Full system, fixed reader <span class="req">*</span></label><input id="mod_e2e" required></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>R9 — Control arms</legend>
+          <div class="fields">
+            <div class="field"><label for="arm_nomemory">No memory: reader alone <span class="req">*</span></label><input id="arm_nomemory" required placeholder="score, and distance from the full system"></div>
+            <div class="field"><label for="arm_fullcontext">Full context, no memory <span class="req">*</span></label><input id="arm_fullcontext" required placeholder="score and distance; or: corpus exceeds the window, with figures"></div>
+            <div class="field"><label for="arm_corrupted">Corrupted or emptied memory <span class="req">*</span></label><input id="arm_corrupted" required placeholder="score, and the drop it produced"></div>
+            <div class="field wide"><label for="arm_note">Do any distances fall inside the dispersion? <span class="req">*</span></label><textarea id="arm_note" required placeholder="Name each distance that is not larger than the dispersion from R4. Under R8 that is a finding, not a rounding."></textarea></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>R10 — Provenance and prior knowledge</legend>
+          <div class="fields">
+            <div class="field"><label for="contamination">Question set public since <span class="req">*</span></label><input id="contamination" required placeholder="date, or: private holdout"></div>
+            <div class="field"><label for="reader_cutoff">Reader training cutoff <span class="req">*</span></label><input id="reader_cutoff" required placeholder="as published by the model provider; or: not disclosed"></div>
+            <div class="field"><label for="canary">Canary strings or holdout used</label><input id="canary" placeholder="or: none"></div>
+            <div class="field"><label for="cs_questions">SHA-256, question set <span class="req">*</span></label><input id="cs_questions" required></div>
+            <div class="field"><label for="cs_answers">SHA-256, gold answers <span class="req">*</span></label><input id="cs_answers" required></div>
+            <div class="field"><label for="cs_nuggets">SHA-256, criteria set</label><input id="cs_nuggets" placeholder="or: no object"></div>
+            <div class="field"><label for="cs_judge">SHA-256, judge prompt</label><input id="cs_judge" placeholder="or: no object"></div>
+            <div class="field"><label for="devtest">Development and test set kept apart <span class="req">*</span></label><input id="devtest" required placeholder="where prompts and thresholds were tuned"></div>
+            <div class="field"><label for="testset_evals">Test set evaluated how many times <span class="req">*</span></label><input id="testset_evals" type="number" min="1" required></div>
+            <div class="field wide"><label for="runs_withheld">Runs carried out but not reported <span class="req">*</span></label><input id="runs_withheld" required placeholder="count and reason; or: none"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>R8 — Verdict states and undefined values</legend>
+          <div class="fields">
+            <div class="field"><label for="v_passed">Criteria passed <span class="req">*</span></label><input id="v_passed" type="number" min="0" required placeholder="0 if none"></div>
+            <div class="field"><label for="v_breached">Criteria breached <span class="req">*</span></label><input id="v_breached" type="number" min="0" required placeholder="0 if none"></div>
+            <div class="field"><label for="v_notmeas">Not measurable <span class="req">*</span></label><input id="v_notmeas" type="number" min="0" required placeholder="0 if none"></div>
+            <div class="field"><label for="v_noobject">No object <span class="req">*</span></label><input id="v_noobject" type="number" min="0" required placeholder="0 if none"></div>
+            <div class="field"><label for="undefined_n">Undefined values, count and share <span class="req">*</span></label><input id="undefined_n" required placeholder="0 if none"></div>
+            <div class="field"><label for="undefined_mech">Do the failures correlate with the result? <span class="req">*</span></label><input id="undefined_mech" required placeholder="independent / correlated with retrieval failure / not established"></div>
+            <div class="field wide"><label for="bounds">Identification bounds <span class="req">*</span></label><input id="bounds" required placeholder="defined cases only; all undefined as failure; all as success — e.g. 0.80 / 0.53 / 0.87"></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Determinism and availability</legend>
+          <div class="fields">
+            <div class="field"><label for="embed">Embedding model and version <span class="req">*</span></label><input id="embed" required></div>
+            <div class="field"><label for="rerank">Reranker and version <span class="req">*</span></label><input id="rerank" required placeholder="or: none"></div>
+            <div class="field"><label for="isolation">Instance state before the run <span class="req">*</span></label><input id="isolation" required placeholder="fresh / restored from image / reused"></div>
+            <div class="field"><label for="warmup">Warm-up runs</label><input id="warmup" placeholder="count, excluded from measurement"></div>
+            <div class="field"><label for="rawdata">Raw data availability <span class="req">*</span></label>
+              <select id="rawdata" required>
+                <option value="">select</option>
+                <option value="published">Published, checksum-verifiable</option>
+                <option value="on_request">Available on request</option>
+                <option value="withheld">Withheld</option>
+              </select></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Disclosure</legend>
+          <div class="fields">
+            <div class="field wide"><label for="conflict">Competing interest <span class="req">*</span></label><input id="conflict" required placeholder="e.g. the reporting party operates a system in the test field; or: none"></div>
+            <div class="field wide"><label for="foreign">Foreign figures cited, and their status <span class="req">*</span></label><textarea id="foreign" required placeholder="Each with source, date and measurement conditions. Where conditions differ, mark as not comparable rather than omitting. Or: none cited."></textarea></div>
+            <div class="field wide"><label for="limits">Limitations <span class="req">*</span> — a report without stated limits is not a report</label><textarea id="limits" required placeholder="What this run does not show. What could not be isolated. What was assumed rather than measured."></textarea></div>
+          </div>
+        </fieldset>
+
+        <div class="record-foot">
+          <button type="submit">Generate result file</button>
+          <button type="button" class="ghost" id="copy">Copy JSON</button>
+          <span class="msg" id="msg" aria-live="polite">Nothing generated yet.</span>
+        </div>
+      </form>
+
+      <div class="out" id="out">
+        <div class="out-head">mbrc-result.json</div>
+        <pre id="json"></pre>
+      </div>
+    </div>
+
+    <p class="hint text">A record is <b>conformant with MBRC 1.0</b> when every field required for
+    the branches it declares is present and non-empty. Conformance is self-declared. The schema at
+    <a href="/MBRC/1.0/mbrc.schema.json">/MBRC/1.0/mbrc.schema.json</a> and the checker at
+    <a href="/MBRC/1.0/mbrc-validate.py">/MBRC/1.0/mbrc-validate.py</a> — one file, no dependencies
+    — let a machine reject an incomplete record. That is the whole of what they do: neither can
+    tell whether the values in a record are true.</p>
+  </section>
+
+  <!-- ============ 05 WHO ============ -->
+  <section id="who" class="wrap">
+    <p class="secnum text">05 — Who runs this</p>
+    <h2 class="text">The obvious objection, answered first</h2>
+
+    <div class="note text">
+      <h4>Competing interest</h4>
+      <p>MBRC is maintained by Patric Zeller, who also builds NEXUS — a long-term memory system
+      sitting in exactly the category this checklist is used to evaluate. That is a competing
+      interest, and hiding it would be the same failure the checklist exists to prevent.</p>
+    </div>
+
+    <aside class="aside">Reproducibility<br>over independence</aside>
+    <p class="text">The reason to publish anyway: independence is not what makes a measurement
+    trustworthy — reproducibility is. Two of the figures cited on this page come from a market
+    participant rather than from an independent auditor, and they are cited regardless, because the
+    data, the scripts and every disputed case are published and checksum-verifiable
+    (<a href="#s4">sources 4</a> and <a href="#s6">6</a>). That is the standard this document asks
+    of others, so it is the standard by which it asks to be judged itself.</p>
+
+    <p class="text">No NEXUS figure appears in this document, and none will. When NEXUS figures
+    are published they will be published as self-measurements, on their own page, each with a
+    completed record attached, under these rules and with this disclosure. That page does not exist
+    yet. When it does, it will be linked from here — and if it is ever linked without a record
+    attached, this paragraph is the thing to hold up.</p>
+
+    <p class="text">The rules above were written to be architecture-neutral. Dimensions where NEXUS
+    is structurally unusual — bi-temporal correctness, formal reasoning, deletion and tenant
+    isolation compliance — are deliberately <em>not</em> part of this checklist. They are a separate
+    proposal, to be argued separately, once the reporting baseline holds.</p>
+
+    <div class="note calm text">
+      <h4>Corrections</h4>
+      <p>If a rule, a cited figure or its stated conditions is wrong here, send it. It gets fixed,
+      the change is recorded, and the person who found it is named.</p>
+      <p><a href="mailto:info@patric-zeller.de">info@patric-zeller.de</a></p>
+    </div>
+  </section>
+
+
+  <!-- ============ 06 LIMITATIONS ============ -->
+  <section id="limitations" class="wrap">
+    <p class="secnum text">06 — Limitations</p>
+    <h2 class="text">What this document cannot do</h2>
+    <p class="lead-sub text">The form refuses a record without a limitations field. This is
+    ours.</p>
+
+    <aside class="aside">Self-report<br>· the weakest link</aside>
+    <p class="text">Everything in section 04 is self-declared, and self-declaration has a measured
+    track record that is not good. In a study of twelve trials published in journals that require a
+    reporting checklist, one selected the applicable checklist; of the six that got that far, one
+    was fully consistent with its own published text.<sup class="ref"><a href="#s31">31</a></sup>
+    At one large machine-learning conference, only 34 % of reviewers found checklist answers useful
+    for their assessment.<sup class="ref"><a href="#s30">30</a></sup> Model cards, which nobody is
+    obliged to complete, are present on 44.2 % of models, with the evaluation section filled in
+    15.4 % of the time and the limitations section 17.4 %.<sup class="ref"><a href="#s29">29</a></sup>
+    And the evidence that reporting guidelines improve reporting is itself observational: the
+    Cochrane review of CONSORT found no experimental evaluation among fifty, with fewer than 8 %
+    adjusting for confounding.<sup class="ref"><a href="#s27">27</a></sup></p>
+
+    <p class="text">Two consequences are built into the form rather than argued away. Where a field
+    can be checked by a machine it is a value, not a claim: commit hash, benchmark checksum, model
+    identifier and version, seeds, run count, standard error, measurement counts. "We were careful
+    about contamination" is not checkable; "the question set has been public since October 2024 and
+    the reader's training cutoff is August 2025" is. And a record that cannot be validated is not a
+    record, which is why the schema is published rather than described — a machine can reject an
+    incomplete record without anyone's good faith being involved.</p>
+
+    <div class="note text">
+      <h4>No enforcement, and no pretence of it</h4>
+      <p>Every reporting standard that measurably changed behaviour did so through a gate: trial
+      registration as a precondition for review, a camera-ready process, a desk-reject rule, a
+      metadata check inside submission. Code submission at one conference rose from 40 % at
+      submission to 74.4 % at camera-ready once the requirement sat inside the process rather than
+      beside it.<sup class="ref"><a href="#s30">30</a></sup></p>
+      <p>MBRC sits beside the process. It has no gate and will not acquire one by being written more
+      firmly. The realistic path is to make the record a by-product of running an evaluation instead
+      of a task that follows it. Until that exists, adoption rests on whether the rules are worth
+      following — which is a weaker force than a gate, and should be recognised as one.</p>
+    </div>
+
+    <h3 class="text">What version 1.0 does not have</h3>
+    <p class="text">Named plainly, because the alternative is that someone else names them:</p>
+    <ul class="plain">
+      <li><b>No consensus process.</b> No Delphi round, no consensus meeting, no piloting, no
+      co-authors. One author, one draft, open for comment. Two workshops at NeurIPS in December 2026
+      — one on long-term memory, one on LLM judges, the latter announcing a judge-disclosure
+      template — are the places where such a process could start.</li>
+      <li><b>No explanation document.</b> Each rule states its reasoning in a paragraph; none has
+      the worked good and bad examples that keep a checklist from becoming box-ticking.</li>
+      <li><b>No retrospective application.</b> MBRC has not been applied to the existing memory
+      benchmarks and vendor publications to report how many satisfy each rule. Until that is done,
+      this document is an opinion rather than a finding — and it is the single most useful thing
+      that could be added to it.</li>
+      <li><b>No field mapping.</b> To NIST AI 800-2, to the dataset metadata mandated at one venue,
+      or to the interpretive signals of Evaluation Cards.</li>
+      <li><b>No independent review, no institutional backing, no accreditation.</b> A validator and
+      a versioned schema ship with this version; a persistent identifier does not yet.</li>
+    </ul>
+
+    <h3 class="text">Scope</h3>
+    <p class="text">MBRC governs how a measurement is reported. It does not say which benchmark is
+    worth running, it certifies nothing, it produces no ranking, and a completed record is a
+    self-declaration and not a seal. It is also written for a field that measures in English: no
+    German-language memory benchmark exists, and every method named on this page evaluates English
+    conversation.</p>
+
+    <p class="text">The author's competing interest is stated in <a href="#who">section 05</a> and
+    is not repeated here — but it belongs in this list, and a reader who weighs the limitations
+    above should weigh that one with them.</p>
+  </section>
+
+  <!-- ============ 07 SOURCES ============ -->
+  <section id="sources" class="wrap">
+    <p class="secnum text">07 — Sources</p>
+    <h2 class="text">Every figure on this page, with its conditions</h2>
+    <p class="lead-sub text">A checklist that asks others for provenance owes its own.</p>
+
+    <aside class="aside">Evidence class<br>· stated per entry</aside>
+    <p class="text"><b>Peer-reviewed</b> — reviewed and published at a conference or in a
+    journal. <b>Preprint</b> — published, not reviewed. <b>Audit, open</b> — not reviewed, but
+    reproducible from published data and scripts. <b>Primary source</b> — a report by a laboratory
+    with documented method, not independently reviewed. <b>Standards draft</b> — issued for public
+    comment by a standards body. <b>Vendor figure</b> — a self-measurement by a party with an
+    interest in the result; under R7 it is not comparable to anything measured differently.
+    Where a source has an interest in the outcome, that is stated in the entry rather than left to
+    the reader.</p>
+
+    <div class="wide">
+      <ol class="sources">
+        <li id="s1"><b>Vendor research page.</b> 90.2 % on LongMemEval (451 / 500). Its
+        "Reproducibility notes" state reader and judge as gpt-5.4 with chain-of-thought grading, the
+        retrieval depths, and the question counts for both benchmarks. The page shows no date; its
+        embedded metadata gives a last-modified date of 27 August 2026, and archived copies show the
+        figures and the notes unchanged since 14 June 2026. getzep.com/research, retrieved 29 August
+        and 15 September 2026.<span class="tier">Vendor figure</span></li>
+
+        <li id="s2"><b>Rasmussen, Paliychuk, Beauvais, Ryan, Chalef:</b> "Zep: A Temporal Knowledge
+        Graph Architecture for Agent Memory", arXiv:2501.13956v1, 20 January 2025. 71.2 % with
+        reader gpt-4o, judge GPT-4o using the question-type prompts from the LongMemEval paper,
+        subset LongMemEval_S (Table 2).<span class="tier">Preprint</span></li>
+
+        <li id="s3"><b>Zhou et al. (Shanghai Jiao Tong University, Tsinghua University,
+        MemTensor):</b> "Are We Ready For An Agent-Native Memory System?", arXiv:2606.24775v1,
+        23 June 2026. Twelve memory systems and two reference baselines under uniform conditions,
+        decomposed into four modules. The 48.0 quoted here is that study's LLM-judge accuracy for
+        the same system named in sources 1 and 2 (§4.1); the study does not state which version of
+        that system was tested, which subset was used, or how many questions. One of the evaluated
+        systems is operated by co-authors of the study. Its code repository pins the vendor's client
+        library at version 2.22.1 and configures a truncated longmemeval_s subset at 150,000 tokens;
+        the service version behind the client and the question count remain
+        unstated.<span class="tier">Preprint</span></li>
+
+        <li id="s4"><b>Penfield Labs:</b> LoCoMo audit, 8 April 2026. 99 score-corrupting errors in
+        1,540 questions (6.4 %), theoretical scoring ceiling 93.57 %, and 62.81 % acceptance of
+        vague-but-topical wrong answers by a commonly used judge configuration — against roughly
+        89 % detection for concrete factual errors. Data, scripts and all 99 cases published under
+        CC BY-NC 4.0 with SHA-256 provenance for the upstream dataset. Published under a name that
+        also sells a memory product of its own (penfield.app); no individual authors are named on
+        the publication or the repository, and no correction to the figures had been issued as of 15
+        September 2026.<span class="tier">Audit, open</span></li>
+
+        <li id="s5"><b>Uddin, Shubham, Wang, Blanco, Baral (Arizona State University, Genies,
+        University of Arizona):</b> "From Recall to Forgetting: Benchmarking Long-Term Memory for
+        Personalized Agents" (Memora), arXiv:2604.20006, 21 April 2026. A metric that penalises use
+        of superseded information; 88.3 % average agreement between LLM and human judgment;
+        CC BY 4.0.<span class="tier">Preprint</span></li>
+
+        <li id="s6"><b>Penfield Labs:</b> benchmark proposal, 9 April 2026. Wilson 95 % intervals
+        make 56 % of adjacent-pair per-category comparisons statistically indistinguishable;
+        category sizes range from 96 to 841 questions. Same provenance and same caveat as source
+        4.<span class="tier">Audit, open</span></li>
+
+        <li id="s7"><b>Wu, Wang, Yu, Zhang, Chang, Yu:</b> "LongMemEval: Benchmarking Chat
+        Assistants on Long-Term Interactive Memory", ICLR 2025, arXiv:2410.10813. 500 curated
+        questions across five long-term memory abilities; the evaluator model and its prompts are
+        specified in the paper and prescribed in the repository, and the paper reports the
+        evaluator's agreement with human experts.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s8"><b>Wu et al. (UCLA):</b> "LongMemEval-V2: Evaluating Long-Term Agent Memory
+        Toward Experienced Colleagues", arXiv:2605.12493, 12 May 2026. Holds the downstream reader
+        fixed across all arms — the precedent for R1.<span class="tier">Preprint</span></li>
+
+        <li id="s9"><b>Tavakoli, Salemi, Ye, Abdalla, Zamani, Mitchell (University of Alberta,
+        UMass Amherst):</b> "Beyond a Million Tokens" (BEAM), ICLR 2026, arXiv:2510.27246. 100
+        conversations across 19 domains, scales to 10 M tokens, 0 / 0.5 / 1 nugget scoring, and
+        Kendall tau-b for event ordering — the precedent for R3.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s10"><b>Hu, Wang, McAuley (UC San Diego):</b> "Evaluating Memory in LLM Agents via
+        Incremental Multi-Turn Interactions" (MemoryAgentBench), ICLR 2026, arXiv:2507.05257. Four
+        competencies; no tested method masters all four, and selective forgetting is the hardest of
+        them.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s11"><b>Maharana, Lee, Tulyakov, Bansal, Barbieri, Fang:</b> "Evaluating Very
+        Long-Term Conversational Memory of LLM Agents" (LoCoMo), ACL 2024, arXiv:2402.17753. The
+        dataset audited in sources 4 and 6.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s12"><b>Zheng, Chiang et al.:</b> "Judging LLM-as-a-Judge with MT-Bench and Chatbot
+        Arena", NeurIPS 2023 Datasets and Benchmarks, arXiv:2306.05685. Documents position bias,
+        verbosity bias and self-enhancement bias in LLM judges, and reports that strong judges reach
+        agreement with human preference at about the level humans reach with each
+        other.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s13"><b>Feinstein and Cicchetti:</b> "High agreement but low kappa", Journal of
+        Clinical Epidemiology 43 (1990), together with <b>Gwet:</b> "Computing inter-rater
+        reliability and its variance in the presence of high agreement", British Journal of
+        Mathematical and Statistical Psychology 61 (2008). The prevalence and bias paradoxes of
+        Cohen's κ, and the AC1 coefficient proposed in
+        response.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s14"><b>Miller:</b> "Adding Error Bars to Evals: A Statistical Approach to Language
+        Model Evaluations", arXiv:2411.00640. Standard errors, clustered standard errors and paired
+        differences for model evaluations, with the question rather than the run as the sampling
+        unit.<span class="tier">Preprint</span></li>
+
+        <li id="s15"><b>Card, Henderson, Khandelwal, Jia, Mahowald, Jurafsky:</b> "With Little Power
+        Comes Great Responsibility", EMNLP 2020. Typical comparisons in this literature are
+        underpowered for the effect sizes they report.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s16"><b>Thinking Machines Lab:</b> "Defeating Nondeterminism in LLM Inference",
+        2025. Attributes run-to-run variation at temperature zero primarily to batch-size dependence
+        in serving rather than to floating-point arithmetic; 1,000 identical requests produced 80
+        distinct outputs.<span class="tier">Primary source</span></li>
+
+        <li id="s17"><b>Madley-Dowd, Hughes, Tilling, Heron:</b> "The proportion of missing data
+        should not be used to guide decisions on multiple imputation", Journal of Clinical
+        Epidemiology 110 (2019).<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s18"><b>Balloccu, Schmidtova, Lango, Dusek:</b> "Leak, Cheat, Repeat: Data
+        Contamination and Evaluation Malpractices in Closed-Source LLMs", EACL
+        2024.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s19"><b>Singh, Hooker et al.:</b> "The Leaderboard Illusion", arXiv:2504.20879,
+        NeurIPS 2025. Documents selective disclosure of privately tested model variants and
+        asymmetric data access on a public leaderboard.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s20"><b>Zhou et al.:</b> "Establishing Best Practices for Building Rigorous Agentic
+        Benchmarks" (Agentic Benchmark Checklist), arXiv:2507.02825. Nineteen authors across UIUC,
+        Stanford, Berkeley, Yale, Princeton, MIT, MLCommons and the UK AI Safety Institute; ten
+        checks on task validity, 23 on outcome validity and 13 on benchmark reporting. Ten widely
+        used agent benchmarks were audited and all ten had reporting
+        defects.<span class="tier">Preprint</span></li>
+
+        <li id="s21"><b>NIST:</b> "Practices for Automated Benchmark Evaluations of Language
+        Models", NIST AI 800-2, initial public draft, January 2026, Center for AI Standards and
+        Innovation, DOI 10.6028/NIST.AI.800-2.ipd. Covers protocol design, LLM-as-a-judge,
+        contamination, uncertainty quantification, run logging and qualified claims; Practice 3.2
+        recommends an interoperable schema for evaluation
+        reporting.<span class="tier">Standards draft</span></li>
+
+        <li id="s22"><b>EvalEval Coalition:</b> "Evaluation Cards: An Interpretive Layer for AI
+        Evaluation Reporting", arXiv:2606.09809, June 2026. Thirty-three institutions; four
+        interpretive signals including reporting completeness and score comparability, with a live
+        registry that listed 1,396 benchmarks and 501,917 results in its snapshot of 7 September
+        2026.<span class="tier">Preprint</span></li>
+
+        <li id="s23"><b>Masters, Liu, Albrecht:</b> "Rollout Cards: A Reproducibility Standard for
+        Agent Research", arXiv:2605.12131, May 2026. Typed row schemas, versioned scoring scripts
+        and a drops manifest for long-horizon agent runs.<span class="tier">Preprint</span></li>
+
+        <li id="s24"><b>BenchmarkCards:</b> "Standardized Documentation for Large Language Model
+        Benchmarks", arXiv:2410.12974, NeurIPS 2025 Datasets and Benchmarks, University of Notre
+        Dame and IBM Research. Documents the benchmark itself; does not prescribe prompts, seeds,
+        significance tests or judge configuration.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s25"><b>Kapoor, Narayanan et al.:</b> "REFORMS: Consensus-based Recommendations for
+        Machine-learning-based Science", Science Advances 10(18):eadk3452, 2024. Thirty-two items in
+        eight sections, agreed by nineteen researchers across five disciplines after a workshop,
+        without a formal Delphi process.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s26"><b>Moher, Schulz, Simera, Altman:</b> "Guidance for Developers of Health
+        Research Reporting Guidelines", PLoS Medicine 7(2):e1000217, 2010. The eighteen-step method
+        behind the CONSORT family, including the Delphi round, the consensus meeting, piloting and
+        the explanation-and-elaboration document.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s27"><b>Turner et al.:</b> Cochrane methodology review MR000030, 2012. CONSORT
+        endorsement against completeness of reporting across 16,604 randomised trials; no included
+        evaluation used an experimental design and fewer than 8 % adjusted for
+        confounding.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s28"><b>Biderman, Schoelkopf, Sutawika et al.:</b> "Lessons from the Trenches on
+        Reproducible Evaluation of Language Models", arXiv:2405.14782. Five reporting practices in
+        Appendix D; section 3.2 calls for reporting standards
+        explicitly.<span class="tier">Preprint</span></li>
+
+        <li id="s29"><b>Analysis of 32,111 model cards</b> across 74,970 repositories,
+        arXiv:2402.05160. 44.2 % of models carry a card at all; the evaluation section is filled in
+        for 15.4 % of them and the limitations section for
+        17.4 %.<span class="tier">Preprint</span></li>
+
+        <li id="s30"><b>Pineau et al.:</b> "Improving Reproducibility in Machine Learning Research
+        (A Report from the NeurIPS 2019 Reproducibility Program)", arXiv:2003.12206. Code submission
+        rose from 40 % at submission to 74.4 % at camera-ready once the checklist sat inside the
+        process; only 34 % of reviewers found the checklist answers useful for their
+        assessment.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s31"><b>Study of twelve randomised trials</b> published between 2016 and 2017 in
+        journals that require a reporting checklist, Trials 19 (2018). One of the twelve selected
+        the applicable CONSORT extension; of the six with a correct checklist, one was fully
+        consistent with its own published text.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s32"><b>Zhang, Li, Song, Lu, Li, Yang, Li:</b> "Memory in Large Language Models:
+        Mechanisms, Evaluation and Evolution", arXiv:2509.18868, 23 September 2025. Survey. Section
+        4.1.4 proposes a Minimum Reproducibility Disclosure checklist with eight dimensions —
+        temporal governance, freshness, leakage auditing, model and parameters, retrieval and
+        re-ranking, memory settings, resources and cost, limitations — and a YAML template; section
+        4.1.5 asks for agreement coefficients with 95 % intervals, paired permutation or bootstrap
+        tests and effect sizes. The closest predecessor to this checklist that we are aware
+        of.<span class="tier">Preprint</span></li>
+
+        <li id="s33"><b>Sheverev, Finkelstein, Nikolenko:</b> "Beyond Memory Leaderboards:
+        Evaluating Scientific Memory as Budgeted Context Restoration", arXiv:2607.16848, 18 July
+        2026. Eight systems and a no-retrieval baseline on two full-text benchmarks; concludes that
+        memory leaderboards are not interpretable without the full protocol — ingestion
+        granularity, raw-text preservation, retrieval budget, retrieval modality, rubric audit and
+        judge choice.<span class="tier">Preprint</span></li>
+
+        <li id="s34"><b>Rao, Callison-Burch:</b> "Agreement Metrics for LLM-as-Judge Evaluation:
+        What to Report and Why", arXiv:2606.00093, v2 of 31 July 2026. Shows on a rubric benchmark
+        with per-criterion human labels that protocol choice alone moves reported accuracy from
+        0.551 to 0.899 and carries κ across zero without altering a verdict; distils a reporting
+        checklist that makes agreement claims reconstructible and
+        comparable.<span class="tier">Preprint</span></li>
+
+        <li id="s35"><b>Feng, Shen, Balashankar, Gerner-Beuerle, Rodrigues:</b> "Noisy but Valid:
+        Robust Statistical Evaluation of LLMs with Imperfect Judges", ICLR 2026, arXiv:2601.20913.
+        Estimates a judge's true-positive and false-positive rates on a small human-labelled
+        calibration set and derives a variance-corrected decision threshold with finite-sample
+        error control.<span class="tier">Peer-reviewed</span></li>
+
+        <li id="s36"><b>Huang, Zhang, Wu, Chen, Jiang, Yang, Yang, Zou, Zhang, Wu, Wu, Chang, Yu,
+        Liu, Caliskan:</b> "Harness the Memory: A Holistic Evaluation of Memory Substrates in Memory
+        Agents", arXiv:2608.15008, 15 August 2026. Controlled harness over three backbone models and
+        four benchmark suites; reports Zep, Mem0 and MemGPT in a separate auxiliary-cost analysis
+        rather than the main comparison because their pipelines carry substantially different
+        auxiliary-model budgets; its survey finds 62 % of all benchmark–system pairs drawing on
+        LoCoMo and LongMemEval.<span class="tier">Preprint</span></li>
+
+        <li id="s37"><b>LoCoMo-Refined</b> (mem-eval-suite), released 14 April 2026. 1,382 questions
+        with 337 question–answer pairs revised through screening and human audit, judge Qwen3-14B,
+        reported judge–human agreement rising from 43.67 % on the original to 86.33 %; CC BY-NC 4.0.
+        The publisher is not identified in the repository.<span class="tier">Primary source</span></li>
+
+        <li id="s38"><b>Agent Memory Leaderboard</b>, agentmemoryleaderboard.ai, first public list
+        12 August 2026. Organised by a group of universities with memory vendors as partners,
+        several of which appear on the board. Fixes the answer model, hashes datasets and pipeline
+        code and versions submissions; judge model and prompts are not disclosed and no run counts
+        or intervals are published. The system in sources 1 to 3 is not among the listed
+        systems.<span class="tier">Primary source</span></li>
+      </ol>
+    </div>
+
+    <div class="note calm text">
+      <h4>How to cite, and how to correct</h4>
+      <p>Memory Benchmark Reporting Checklist (MBRC) 1.0, Patric Zeller, 2026, CC BY 4.0. All
+      external figures were checked against their primary source on 29 August 2026 and again on 15
+      September 2026; where a source
+      could not be dated or its conditions could not be established, that is stated in the entry
+      rather than omitted.</p>
+<pre>@misc{zeller2026mbrc,
+  author       = {Zeller, Patric},
+  title        = {Memory Benchmark Reporting Checklist ({MBRC}) 1.0},
+  year         = {2026},
+  month        = {9},
+  howpublished = {\url{https://patric-zeller.de/MBRC}},
+  note         = {Version 1.0, published 15 September 2026. Licence CC BY 4.0.}
+}</pre>
+      <h4 style="margin-top:1.4rem">Changes</h4>
+      <ul class="plain">
+        <li><b>15 September 2026</b> — Version 1.0 published: ten rules, four verdict states, source
+        list with evidence class per entry, result schema and validator under /MBRC/1.0/. External
+        figures re-checked on 15 September 2026.</li>
+        <li><b>5 August 2026</b> — an unannounced draft with eight rules was reachable at this
+        address; it is superseded in full and no records were issued against it.</li>
+      </ul>
+      <p>An earlier draft of this page was reachable from 5 August 2026. It differs from this
+      version in its rules and in its record schema, it was never announced, and no records were
+      issued against it — but it was public, so it is named here rather than quietly replaced.</p>
+      <p>If an entry here misstates a figure, its date or its conditions, send it to
+      <a href="mailto:info@patric-zeller.de">info@patric-zeller.de</a>. It gets fixed, the change is
+      recorded with its date, and the person who found it is named.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div class="full">
+    <span>MBRC 1.0 · published 15 September 2026</span>
+    <span>Text and checklist: <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a> · result schema: CC0 1.0</span>
+    <span class="right">
+      <a href="/">Patric Zeller</a> ·
+      <a href="/impressum">Impressum</a> ·
+      <a href="/datenschutz">Datenschutz</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var form=document.getElementById('mbrc'),
+      pre=document.getElementById('json'),
+      out=document.getElementById('out'),
+      msg=document.getElementById('msg'),
+      copy=document.getElementById('copy'),
+      payload=null,
+      SCHEMA_URI='https://patric-zeller.de/MBRC/1.0/mbrc.schema.json';
+
+  function el(id){return document.getElementById(id)}
+  function v(id){var e=el(id);return e?e.value.trim():''}
+
+  /* Felder, die erst durch eine fruehere Antwort zur Pflicht werden. */
+  var COND=[
+    {gate:'judge_used',on:'yes',fields:['judge_model','judge_prompt','judge_family','judge_reject',
+      'judge_reject_n','judge_accept','judge_accept_n','judge_agree','judge_agree_n','judge_ac1',
+      'judge_kappa','judge_kappa_axis','judge_bias']},
+    {gate:'r5_applies',on:'yes',fields:['tok_in','tok_out','lat_retr','lat_e2e','lat_n','hardware',
+      'concurrency','ctx_red','ingest_tokens','ingest_time']}
+  ];
+
+  function sync(){
+    COND.forEach(function(c){
+      var g=el(c.gate),active=!!g&&g.value===c.on;
+      c.fields.forEach(function(id){
+        var e=el(id);if(!e)return;
+        if(active){e.setAttribute('required','required')}
+        else{e.removeAttribute('required');e.classList.remove('bad')}
+        var star=document.querySelector('label[for="'+id+'"] .req');
+        if(star){star.style.visibility=active?'visible':'hidden'}
+      });
+    });
+  }
+
+  function prune(o){
+    var r={};
+    Object.keys(o).forEach(function(k){
+      var x=o[k];
+      if(x&&typeof x==='object'&&!Array.isArray(x)){var c=prune(x);if(Object.keys(c).length)r[k]=c}
+      else if(x!==''&&x!=null){r[k]=x}
+    });
+    return r;
+  }
+
+  function build(){
+    return prune({
+      schema:'MBRC/1.0',
+      schema_uri:SCHEMA_URI,
+      generated:new Date().toISOString(),
+      conformance:{declaration:'self-declared',verified_by:'none'},
+      system:{name:v('sys_name'),version:v('sys_version'),commit:v('sys_commit'),
+        configuration:v('sys_config')},
+      run:{date:v('run_date'),measurement_window:v('meas_window')},
+      benchmark:{name:v('bench'),version:v('bench_version'),subset:v('bench_subset'),
+        questions:v('bench_n'),exclusions:v('bench_excl')},
+      r1_reader:{model:v('reader_model'),version:v('reader_version'),temperature:v('reader_temp'),
+        context_budget_ceiling_tokens:v('reader_ctx'),seed:v('reader_seed'),
+        answer_prompt:v('reader_prompt')},
+      r2_judge:{judge_in_path:v('judge_used'),model:v('judge_model'),
+        prompt_version:v('judge_prompt'),family_vs_reader:v('judge_family'),
+        rejection_rate_pct:v('judge_reject'),rejection_set_size:v('judge_reject_n'),
+        acceptance_rate_pct:v('judge_accept'),acceptance_set_size:v('judge_accept_n'),
+        human_agreement_pct:v('judge_agree'),double_scored_n:v('judge_agree_n'),
+        gwet_ac1:v('judge_ac1'),cohens_kappa:v('judge_kappa'),kappa_axis:v('judge_kappa_axis'),
+        bias_checks:v('judge_bias')},
+      r3_r4_scoring:{scheme:v('scoring'),criteria_origin:v('nugget_source'),tasks:v('tasks_n'),
+        smallest_effect_of_interest:v('mde'),replicates:v('runs'),
+        seeds_and_permutations:v('seeds'),aggregation:v('agg'),dispersion:v('dispersion'),
+        statistical_test:v('stat_test'),statistical_unit:v('stat_unit'),
+        tests_total:v('tests_total'),multiplicity:v('multiplicity')},
+      r5_cost:{applies:v('r5_applies'),tokens_input:v('tok_in'),tokens_cached_input:v('tok_cached'),
+        tokens_output:v('tok_out'),retrieval_latency:v('lat_retr'),
+        end_to_end_latency:v('lat_e2e'),measurements_per_cell:v('lat_n'),
+        hardware_region:v('hardware'),concurrency:v('concurrency'),cache_state:v('cache_hit'),
+        context_reduction:v('ctx_red'),ingestion_tokens:v('ingest_tokens'),
+        ingestion_time:v('ingest_time'),storage:v('storage')},
+      r6_modules:{retrieval:v('mod_retrieval'),extraction:v('mod_extraction'),
+        routing:v('mod_routing'),maintenance:v('mod_maintenance'),
+        full_system_fixed_reader:v('mod_e2e')},
+      r9_controls:{no_memory:v('arm_nomemory'),full_context:v('arm_fullcontext'),
+        corrupted_memory:v('arm_corrupted'),distances_within_dispersion:v('arm_note')},
+      r10_provenance:{question_set_public_since:v('contamination'),
+        reader_training_cutoff:v('reader_cutoff'),canary_or_holdout:v('canary'),
+        sha256_questions:v('cs_questions'),sha256_gold_answers:v('cs_answers'),
+        sha256_criteria:v('cs_nuggets'),sha256_judge_prompt:v('cs_judge'),
+        dev_test_separation:v('devtest'),test_set_evaluations:v('testset_evals'),
+        runs_not_reported:v('runs_withheld')},
+      r8_outcomes:{passed:v('v_passed'),breached:v('v_breached'),not_measurable:v('v_notmeas'),
+        no_object:v('v_noobject'),undefined_values:v('undefined_n'),
+        undefined_mechanism:v('undefined_mech'),identification_bounds:v('bounds')},
+      determinism:{embedding:v('embed'),reranker:v('rerank'),instance_state:v('isolation'),
+        warmup_runs:v('warmup'),raw_data:v('rawdata')},
+      disclosure:{competing_interest:v('conflict'),foreign_figures:v('foreign'),
+        limitations:v('limits')}
+    });
+  }
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    sync();
+    var missing=[],first=null;
+    Array.prototype.forEach.call(form.querySelectorAll('[required]'),function(node){
+      node.classList.remove('bad');
+      if(!node.value.trim()){node.classList.add('bad');missing.push(node);if(!first)first=node}
+    });
+    if(missing.length){
+      msg.className='msg bad';
+      msg.textContent=missing.length+' required field'+(missing.length>1?'s':'')+' still empty — an incomplete record is not comparable.';
+      out.classList.remove('on');
+      first.focus();
+      return;
+    }
+    payload=build();
+    var text=JSON.stringify(payload,null,2);
+    pre.textContent=text;
+    out.classList.add('on');
+    msg.className='msg';
+    msg.textContent='Record complete. Download started.';
+    var url=URL.createObjectURL(new Blob([text],{type:'application/json'})),
+        a=document.createElement('a');
+    a.href=url;a.download='mbrc-result.json';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  });
+
+  copy.addEventListener('click',function(){
+    if(!payload){msg.className='msg bad';msg.textContent='Generate the record first.';return}
+    var text=JSON.stringify(payload,null,2);
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){msg.className='msg';msg.textContent='JSON copied.'});
+    }else{
+      var t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();
+      try{document.execCommand('copy')}catch(err){}
+      document.body.removeChild(t);msg.className='msg';msg.textContent='JSON copied.';
+    }
+  });
+
+  form.addEventListener('input',function(e){if(e.target.classList)e.target.classList.remove('bad')});
+  form.addEventListener('change',sync);
+  sync();
+})();
+</script>
+</body>
+</html>

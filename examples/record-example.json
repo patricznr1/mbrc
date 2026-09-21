@@ -1,0 +1,126 @@
+{
+  "schema": "MBRC/1.0",
+  "schema_uri": "https://patric-zeller.de/MBRC/1.0/mbrc.schema.json",
+  "generated": "2026-01-01T00:00:00Z",
+  "conformance": {
+    "declaration": "self-declared",
+    "verified_by": "none"
+  },
+  "system": {
+    "name": "Example memory system (fictional record)",
+    "version": "0.0.0",
+    "commit": "0000000",
+    "configuration": "fictional: default settings, nothing tuned"
+  },
+  "run": {
+    "date": "2026-01-01",
+    "measurement_window": "2026-01-01 to 2026-01-02 (fictional)"
+  },
+  "benchmark": {
+    "name": "Example benchmark (fictional)",
+    "version": "v0",
+    "subset": "full",
+    "questions": "1000",
+    "exclusions": "none"
+  },
+  "r1_reader": {
+    "model": "example-reader (fictional)",
+    "version": "1.0",
+    "temperature": "0",
+    "context_budget_ceiling_tokens": "100000",
+    "seed": "0",
+    "answer_prompt": "identical"
+  },
+  "r2_judge": {
+    "judge_in_path": "yes",
+    "model": "example-judge (fictional)",
+    "prompt_version": "1.0",
+    "family_vs_reader": "different family",
+    "rejection_rate_pct": "90",
+    "rejection_set_size": "200",
+    "acceptance_rate_pct": "90",
+    "acceptance_set_size": "200",
+    "human_agreement_pct": "90",
+    "double_scored_n": "300",
+    "gwet_ac1": "0.90",
+    "cohens_kappa": "0.80",
+    "kappa_axis": "correct vs incorrect",
+    "bias_checks": "position and length checks run; no effect found (fictional)"
+  },
+  "r3_r4_scoring": {
+    "scheme": "nugget",
+    "criteria_origin": "written by the benchmark authors (fictional)",
+    "tasks": "1000",
+    "smallest_effect_of_interest": "5 points",
+    "replicates": "5",
+    "seeds_and_permutations": "seeds 0 to 4, ingestion order permuted per seed",
+    "aggregation": "mean",
+    "dispersion": "standard deviation 1.0 across replicates",
+    "statistical_test": "paired permutation test",
+    "statistical_unit": "question",
+    "tests_total": "10",
+    "multiplicity": "Benjamini-Hochberg at 0.05"
+  },
+  "r5_cost": {
+    "applies": "yes",
+    "tokens_input": "1000000",
+    "tokens_output": "100000",
+    "retrieval_latency": "100 ms median",
+    "end_to_end_latency": "1000 ms median",
+    "measurements_per_cell": "5",
+    "hardware_region": "fictional region",
+    "concurrency": "1",
+    "context_reduction": "90 %",
+    "ingestion_tokens": "1000000",
+    "ingestion_time": "1 hour",
+    "tokens_cached_input": "0",
+    "cache_state": "cold",
+    "storage": "1 GB"
+  },
+  "r6_modules": {
+    "retrieval": "50",
+    "extraction": "50",
+    "routing": "no object",
+    "maintenance": "no object",
+    "full_system_fixed_reader": "50"
+  },
+  "r9_controls": {
+    "no_memory": "10",
+    "full_context": "60",
+    "corrupted_memory": "10",
+    "distances_within_dispersion": "none"
+  },
+  "r10_provenance": {
+    "question_set_public_since": "2020-01-01",
+    "reader_training_cutoff": "2019-12-31",
+    "canary_or_holdout": "none",
+    "sha256_questions": "0000000000000000000000000000000000000000000000000000000000000000",
+    "sha256_gold_answers": "0000000000000000000000000000000000000000000000000000000000000000",
+    "sha256_criteria": "0000000000000000000000000000000000000000000000000000000000000000",
+    "sha256_judge_prompt": "0000000000000000000000000000000000000000000000000000000000000000",
+    "dev_test_separation": "dev and test sets disjoint (fictional)",
+    "test_set_evaluations": "1",
+    "runs_not_reported": "0"
+  },
+  "r8_outcomes": {
+    "passed": "10",
+    "breached": "0",
+    "not_measurable": "0",
+    "no_object": "0",
+    "undefined_values": "0 (0 %)",
+    "undefined_mechanism": "independent of the result",
+    "identification_bounds": "defined cases only: 50; all undefined as failure: 50; all undefined as success: 50"
+  },
+  "determinism": {
+    "embedding": "example-embedding 1.0, pinned (fictional)",
+    "reranker": "none",
+    "instance_state": "fresh instance per replicate",
+    "warmup_runs": "1",
+    "raw_data": "published"
+  },
+  "disclosure": {
+    "competing_interest": "none (fictional record)",
+    "foreign_figures": "none cited",
+    "limitations": "FICTIONAL EXAMPLE — no measurement was performed; the values illustrate the record shape only."
+  }
+}
