@@ -259,7 +259,7 @@ legend{font-family:var(--mono);font-size:var(--s--1);letter-spacing:.08em;
 .fields{display:grid;grid-template-columns:1fr;gap:.95rem 1.4rem}
 @media (min-width:38rem){.fields{grid-template-columns:repeat(auto-fit,minmax(13rem,1fr))}}
 .field{display:flex;flex-direction:column;gap:.3rem;min-width:0}
-.field.wide{grid-column:1/-1}
+.field.wide{grid-column:1/-1;width:auto} /* width:auto hebt die Layout-Klasse .wide (col-wide) auf */
 label{font-family:var(--mono);font-size:var(--s--1);color:var(--ink-55);line-height:1.4}
 label .req{color:var(--rust)}
 label .req.cond{visibility:hidden}
@@ -922,7 +922,7 @@ ol.sources a{color:var(--ink-70)}
     (<code>connect-src 'none'; form-action 'none'</code>), which your browser enforces whatever this
     page says. It stores nothing on your device either — no cookies, no local storage. Loading the
     page is an ordinary web request to the hosting provider, which records standard server log data;
-    see the privacy notice linked at the foot of the page.</p>
+    see the privacy notice linked at the foot of the page (German, legally binding, and an English translation).</p>
 
     <div class="record full">
       <div class="record-head"><b>MBRC result record</b><span>schema MBRC/1.0</span></div>
@@ -1191,7 +1191,7 @@ ol.sources a{color:var(--ink-70)}
       <h4>Corrections</h4>
       <p>If a rule, a cited figure or its stated conditions is wrong here, send it. It gets fixed,
       the change is recorded, and the person who found it is named.</p>
-      <p><a href="mailto:info@patric-zeller.de">info@patric-zeller.de</a></p>
+      <p><a href="mailto:info@patric-zeller.de">info@patric-zeller.de</a> · or open an issue at <a href="https://github.com/patricznr1/mbrc/issues">github.com/patricznr1/mbrc</a></p>
     </div>
   </section>
 
@@ -1535,7 +1535,8 @@ ol.sources a{color:var(--ink-70)}
       version in its rules and in its record schema, it was never announced, and no records were
       issued against it — but it was public, so it is named here rather than quietly replaced.</p>
       <p>If an entry here misstates a figure, its date or its conditions, send it to
-      <a href="mailto:info@patric-zeller.de">info@patric-zeller.de</a>. It gets fixed, the change is
+      <a href="mailto:info@patric-zeller.de">info@patric-zeller.de</a> or open an issue at
+      <a href="https://github.com/patricznr1/mbrc/issues">github.com/patricznr1/mbrc</a>. It gets fixed, the change is
       recorded with its date, and the person who found it is named.</p>
     </div>
   </section>
@@ -1548,7 +1549,7 @@ ol.sources a{color:var(--ink-70)}
     <span class="right">
       <a href="/">Patric Zeller</a> ·
       <a href="/impressum">Impressum</a> ·
-      <a href="/datenschutz">Datenschutz</a>
+      <a href="/datenschutz">Datenschutz</a> · <a href="/privacy">Privacy (EN)</a>
     </span>
   </div>
 </footer>
